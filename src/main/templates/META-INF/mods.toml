@@ -18,7 +18,7 @@ license="${mod_license}"
 
 # If your mod is purely client-side and has no multiplayer functionality (be it dedicated servers or Open to LAN),
 # set this to true, and Forge will set the correct displayTest for you and skip loading your mod on dedicated servers.
-#clientSideOnly=true #optional - defaults to false if absent
+clientSideOnly=true
 
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
@@ -80,6 +80,20 @@ description='''${mod_description}'''
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="embeddium"
+    mandatory=true
+    versionRange="[0.3.31,)"
+    ordering="AFTER"
+    side="CLIENT"
+
+[[dependencies.${mod_id}]]
+    modId="oculus"
+    mandatory=true
+    versionRange="[1.8.0,)"
+    ordering="AFTER"
+    side="CLIENT"
 
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares
 # that your mod requires GL version 3.2 or higher. Other features will be added. They are side aware so declaring this won't

@@ -1,0 +1,660 @@
+Voxy Forge 1.20.1 L19 native GPU traversal handoff (in progress)
+Updated: 2026-07-13 14:52 Asia/Taipei
+
+L19 first/second batch implementation
+- Added overflow-safe GpuTraversalBufferLayout sizing for node, request, render, root, queue-metadata, ping-pong scratch, and visibility-tracker buffers. Dispatch rounding and per-binding SSBO limit checks are explicit. The production backend requirement now correctly demands at least 10 SSBO bindings because traversal uses binding indices through 9; the previous count of 8 could incorrectly admit unsupported hardware.
+- Added immutable native-order request/render queue snapshots matching the std430 ABI. Fixed-capacity encoding and decoding reject truncated/oversized buffers, unsigned count overflow, reserved-header contamination, invalid geometry ids, and allocation arithmetic overflow.
+- Added the production raster Hi-Z layout contract used by authoritative Voxy HiZBuffer and hierarchical/screenspace.glsl: each viewport axis rounds down to a power of two, actual width/height are packed into the shader uniform, and mip levels stop according to the upstream raster chain. The experimental HiZBuffer2 exponent ABI is deliberately not used.
+- Ported the exact minimal production shader closure from authoritative voxy-mc_1201: hiz/blit.vsh, hiz/blit.fsh, hierarchical traversal/queue/node/screenspace, frustum, and position utilities. Experimental hiz.comp, cleaner, debug, and gl46 shader families are excluded.
+- Added a strict classpath shader loader with recursive deterministic #import expansion, one GLSL 4.60 header, UTF-8 decoding, validated resource ids, path-traversal rejection, cycle detection, missing-import chains, and a real production traversal closure test.
+- Added GpuTraversalShadowValidationGate. Warmup frames cannot count toward activation; only a configured consecutive CPU/GPU set match can become eligible. Any mismatch, queue overflow, or execution failure immediately revokes eligibility, clears the streak, and restarts warmup while retaining symmetric-difference diagnostics.
+
+L19 third/fourth wave implementation
+- Added production RasterHiZBuffer with authoritative raster mip construction, explicit depth texture/sampler ownership, framebuffer verification, texture/framebuffer barriers, permanent failure disablement, and exact restoration of framebuffer, viewport, VAO, program, active texture, texture/sampler unit 0, depth state, scissor box/state, and cull state.
+- Added GpuTraversalBuffers and isolated LWJGL allocation/upload adapters. Full node snapshots initialize unused slots as tombstones; absolute incremental spans, complete root snapshots, SSBO limits, prior binding restoration, rollback, and idempotent close are enforced.
+- Added GpuTraversalComputeProgram with the authoritative binding/define ABI, explicit scene UBO plus Hi-Z texture/sampler, first direct dispatch, later indirect ping-pong dispatch, required barriers, complete modified-binding restoration, and first-failure permanent disablement. Added non-blocking triple-buffer queue readback with fences, explicit BUFFER_UPDATE barrier, real frame ids, strict queue decoding, and fail-closed map/fence/copy behavior.
+- Fixed NodeManager child-mask changes to preserve surviving child geometry/subtrees through continuous-slot remaps instead of deleting every sibling. Position-based child/geometry updates are bounded and replayed when nodes arrive; negative parents use floor semantics; removed/replaced geometry ids publish exactly once. AsyncNodeManager now publishes immutable encoded node spans, latest complete roots, cleaner effects, and released geometry ids at the worker boundary.
+- Added SectionGeometryRegistry with monotonic non-reused ids, generation-safe worker release requests, identity reference counting, render-thread-only close, and delayed retirement. Added GpuTraversalShadowController frame ordering/timeouts and a compatibility-only GpuTraversalShadowRuntime/LWJGL driver.
+- GpuSectionRenderer now lazily runs the native compute/Hi-Z/readback chain only for the ordinary main framebuffer after the authoritative CPU traversal. GPU output is validation-only, never a draw list. Shader-pack/Oculus paths do not enter this runtime. Metrics expose gpuShadowAvailable/Dispatch/Readback/Match/Mismatch/DisableReason while RenderBackendPolicy remains COMPATIBILITY_ONLY.
+
+L19 validation
+- Final forced gate after all four waves: 357 tests across 72 suites, zero failures/errors/skips. build, jar, and reobfJar passed. Final voxy-0.1.0.jar is 735836 bytes with 370 production classes, the eight intended shader files, no mappings.tsrg, and SHA-256 D7FB97020C8220FA4C8DDD384C12254308F3357D37E788557CD34A9E1F6DCB48.
+- Non-shader runtime PID 28756 was identified by its JDK17 path plus loaded LWJGL/GLFW modules. After valid metrics, 10 fixed polls x 2 seconds all held terrainDrawn=3, uncovered=0, and l13BuildFailureOccurrences=0. The observed final metrics included restored=2062, terrainDrawn=3, translucentDrawn=3, hierarchyVisited=16, hierarchyPruned=11, and uncovered=0. Only that client PID was terminated.
+- The first native-shadow runtime attempt (PID 5620) is explicitly rejected. Intel GLSL compilation exposed an upstream dependency on the optional GPU printf preprocessor through debugDumpNode. The production shader now keeps that unused debug function as a no-op; queue DEBUG calls remain excluded by the undefined DEBUG macro. Only PID 5620 was terminated before the repeat.
+- Repeat PID 320 proved the real Intel OpenGL 4.6 compute path. The fixed 10 x 2 second window kept gpuShadowAvailable=true, terrainDrawn>=1, uncovered=0, and l13BuildFailureOccurrences=0 while dispatch/readback advanced from 218/215 to 267/264. Continued evidence before termination reached 833 dispatches and 830 readbacks without disabling the runtime or changing CPU rendering.
+- Shadow correctness did not pass: the runtime recorded only one matching frame and hundreds of mismatches (263 at the fixed-window evidence and 829 later). This is expected evidence that the current CPU frontier-as-roots compatibility model and GPU Hi-Z/frustum result are not yet equivalent; the validation gate correctly denied activation.
+- Temporary quick-play plus generated distance/storage/ingest entries were removed. Restored state is renderingEnabled=true, renderDistance=12, pauseOnLostFocus=true, shaderPack empty, and no LWJGL/GLFW Minecraft client remains. Pre-existing non-client JDK17 PID 1956 was not targeted.
+
+L19 remaining production boundary / next action
+- Native compute traversal, raster Hi-Z, buffer upload, asynchronous readback, and CPU/GPU frame comparison now execute in production shadow mode, but GPU traversal is not active for drawing. GpuSectionRenderer remains CPU-authoritative and RenderBackendPolicy remains compatibility-only.
+- Next: replace the flat current-frontier root model with the complete READY/world child topology, map the exact CPU visibility contract to GPU frustum/Hi-Z semantics, and drive mismatches to zero through sustained shadow gates. Only then may GpuBackendAvailability become AVAILABLE and GPU render queues feed existing section buffers.
+- Oculus depth-texture exposure, shader/shadow traversal, cleaner/debug shaders, experimental compute Hi-Z, and GPU-driven indirect draw submission remain later L19 sub-gates. The completed 3+3+3+1 agent waves establish the safe production foundation but do not justify declaring L19 complete.
+
+Voxy Forge 1.20.1 L18 release-hardening handoff
+Updated: 2026-07-13 06:32 Asia/Taipei
+
+L18 implementation / release hardening
+- Added client import progress presentation from the L17 job snapshot: determinate/indeterminate HUD states cover queued and running work, cancelling uses the paused color, and terminal jobs clear the display. A platform-isolated taskbar sink permanently falls back to no-op after its first native failure without affecting the HUD.
+- Expanded the Embeddium Voxy page with file/memory storage selection, bounded storage and voxel-ingest queue capacities, and truthful storage-provider, DH codec/SQLite, Chunky, GPU-backend, renderer, and active-storage diagnostics. Simplified Chinese resources are valid UTF-8 and regression-tested.
+- Replaced direct voxel mutation scheduling with a bounded single-worker VoxelIngestService (default capacity 512), explicit backpressure/failure metrics, and deterministic drain/close. FileSectionStorage now performs bounded retries for transient Windows sharing violations.
+- Added aggregated CloseSequence teardown and one-shot failure disablement. Tick/persistence RuntimeExceptions disable Voxy once instead of escaping the Forge tick; startup RuntimeException cleans up and disables Voxy for that world, while JVM Error still cleans up and rethrows.
+- Added ReleaseArtifactPolicy and a conservative DefaultOnReadiness evidence gate. Metadata is restricted to Minecraft [1.20.1], Forge [47.4.0,48), and loader [47,48); mapping sidecars are excluded from the release JAR.
+
+Windows taskbar / release compatibility boundary
+- The native ITaskbarList3 adapter is isolated behind reflection and SafeTaskbarProgress, and releases COM ownership on constructor, update, and close failures. HUD progress remains functional whenever native integration is unavailable.
+- On this Windows host, ITaskbarList3::HrInit returned HRESULT 0x80004001 (E_NOTIMPL) under both attempted COM apartment modes. The GUID and vtable entries were audited as correct. Java 17 java.awt.Taskbar is not a replacement because its Windows progress API requires an AWT Window and cannot bind Minecraft's GLFW HWND. Native taskbar progress is therefore not runtime-proven here and safely falls back to HUD-only.
+- This target hard-links both Embeddium and Oculus APIs and declares both mods mandatory. The current artifact must be distributed with those compatible dependencies; it must not be advertised as supporting an Oculus-free Normal pipeline.
+
+L18 validation
+- Forced all-test gate: 267 tests across 59 suites, zero failures/errors/skips. The final build, jar, and reobfJar passed after source/config cleanup.
+- Final voxy-0.1.0.jar is 607900 bytes with SHA-256 895EDB8B26A986FA7F1D12BEE97A713B369851E046DBF45A77733D7B980E0798. Its 359 entries include 312 production classes plus the required manifest, mods metadata, mixin config/refmap, and both language files; duplicate entries and forbidden mappings.tsrg, tests, run files, logs, and reference sources are all zero.
+- PID 29192 entered the integrated world with ingestCapacity=512 and passed 10 fixed polls x 2 seconds with terrainDrawn>=1, uncovered=0, and l13BuildFailureOccurrences=0. Only that Minecraft JDK17 PID was terminated.
+- A later taskbar diagnostic client (PID 8972) loaded the same world and continued rendering with uncovered=0 and l13BuildFailureOccurrences=0; it was individually identified by LWJGL/GLFW modules and terminated without targeting Gradle daemons. The diagnostic's E_NOTIMPL result is a taskbar failure/fallback result, not native taskbar validation.
+- Temporary quick-play and generated section/storage/ingest config entries were removed. Restored workspace state is renderingEnabled=true, renderDistance=12, pauseOnLostFocus=true, shaderPack empty, and the original save remains. The source default remains renderingEnabled=false.
+
+L18 completion / default-on decision
+- L18 is complete for bounded ingest, import HUD/fallback progress, configuration/diagnostics, lifecycle/storage hardening, artifact policy, and conservative readiness assessment.
+- Default-on is explicitly rejected until the evidence matrix includes at least 3 cold starts, 3 restart restores, a 120-minute continuous run, 20 world transitions, 3 GPU vendors, 3 shader packs, zero uncaught/GL/coverage/corruption/lifecycle failures, and verified safe fallback plus both Normal and shader pipelines.
+- Native Windows taskbar progress remains an environment-specific unverified compatibility item. It is not a blocker for HUD progress or the rest of L18.
+
+Voxy Forge 1.20.1 L17 import-pipeline handoff
+Updated: 2026-07-13 05:44 Asia/Taipei
+
+L17 production implementation
+- Added a bounded single-worker ImportJobExecutor with explicit QUEUED/RUNNING/CANCELLING/CANCELLED/SUCCEEDED/FAILED states, active job-id exclusion, progress snapshots, cooperative cancellation, failure propagation, close ownership, queue backpressure metrics, and exactly-once task cleanup.
+- Added versioned FileImportCheckpointStore records with SHA-256 safe names, bounded UTF-8 fields, file force, atomic replacement where supported, best-effort directory force, corruption rejection, and clear-after-success semantics. Failed/cancelled jobs retain their last durable checkpoint.
+- Main-line review fixed full-queue submit/close deadlock, registered-but-not-enqueued cleanup ordering, cleanup reentrant close, worker self-join, completion interrupt leakage, checkpoint-before-validation regression, successful-execute/failed-close checkpoint loss, and interrupt restoration on rejected submissions.
+- Added a real resumable Anvil region job. Its cursor includes a versioned source-manifest fingerprint plus deterministic chunk index; a changed region plan fails closed instead of resuming at the wrong chunk. Cancellation/restart tests prove the second run skips the already checkpointed chunk and clears the checkpoint only after success.
+- Added ClientImportController to the active world lifecycle. Import jobs close before voxel ingest/storage teardown. Forge client commands provide `/voxy import current`, `/voxy import raw <path>`, `/voxy import status`, `/voxy import cancel`, `/voxy import chunky_status`, and a fail-closed `/voxy import distant_horizons <path>` diagnostic.
+
+Anvil / Chunky import contract
+- Added strict `.mca` discovery and deterministic region/header-slot ordering; unsafe paths, symlinks, truncated headers, header/sector overlap, out-of-file allocations, invalid lengths, and decompression bombs are rejected or isolated per region/chunk.
+- Supports Anvil GZip, Zlib, raw NBT, and safe 1.20.1 external `c.<x>.<z>.mcc` streams with compressed/decompressed limits. NBT xPos/zPos must match the header slot.
+- WorldEngineChunkImportSink performs a full two-phase chunk decode/validation before mapping or world mutation. It validates dimension Y, duplicate sections, block palettes, biome palettes, and light arrays; malformed later sections cannot leave an earlier partial input commit.
+- Ported the authoritative 5/6-bit compact palette repack fallback. Valid sections flow through MappingRegistry, WorldConversionFactory, SectionMipper, and WorldUpdater.
+- ChunkyLiveIntegration has no hard Chunky type link and reports liveHookLinked=false. The target has no Chunky Forge JAR/API, so the real generation-completion mixin is not linked. Offline Anvil import remains fully usable without Chunky.
+
+Distant Horizons import contract / boundary
+- Added SQLite source discovery, strict FullData format/detail/compression models, lightweight metadata indexing, nearest-first ordering, lazy per-record BLOB fetch, duplicate/change detection, bounded mapping/column decoding, and cancellation through scan, fetch, columns, and section emission.
+- Added WorldEngineDhMappingResolver: AIR is forced to block id 0; `_STATE_` canonical properties are resolved; unknown biome falls back to plains; unknown block/state falls back to air; light nibbles and 64x64-to-4x4 chunk coordinates match the authoritative Voxy implementations.
+- SQLite, XZ, and Zstd are modeled as independent capabilities and only the compression used by a row is required. Extreme coordinate distance sorting saturates instead of overflowing.
+- Actual DH import is fail-closed in this target: sqlite-jdbc is absent and production XZ/Zstd decompressor adapters are not linked. The command validates the SQLite source then reports sqlite/xz/zstd capability states. DH remains an optional source, never a core dependency or renderer target.
+
+L17 validation / remaining boundary
+- Forced all-test gate: 242 tests across 51 suites, zero failures/errors. Final build, jar, and reobfJar passed before the runtime gate.
+- PID 1632 entered the original integrated world with backend=file and asyncCapacity=256, then passed 10 fixed polls x 2 seconds after valid metrics. Final evidence included restored=2046, new=0, corrupt=0, terrainDrawn=1, translucentDrawn=1, uncovered=0, and l13BuildFailureOccurrences=0. Only that Minecraft JDK17 PID was terminated.
+- Temporary quick-play and generated section/storage config entries were removed. Restored state is renderingEnabled=true, renderDistance=12, pauseOnLostFocus=true, shaderPack empty, and the original save remains. Only pre-existing JDK21 PID 27900 remains.
+- The input path is all-or-nothing through decode/validation, but WorldEngine still has no cross-section transaction if an unexpected runtime failure occurs during the final multi-section WorldUpdater commit. ZIP import, DataFixer for very old chunks, and the Chunky live completion hook remain future compatibility work.
+- L17 is complete for resumable job lifecycle and production offline Anvil import. DH runtime dependencies/adapters and Chunky live API integration remain explicitly unavailable, not falsely completed. Next is L18: taskbar/boss-bar progress, configuration/diagnostics completion, default-on assessment, long-run compatibility, and release hardening.
+
+Voxy Forge 1.20.1 L16 storage/lifecycle handoff
+Updated: 2026-07-13 05:35 Asia/Taipei
+
+L16 implementation / architecture
+- Added a strict, versioned StorageGraphConfig/StorageNodeConfig JSON contract, complete dependency/options/child preflight, safe storage-root path resolution, duplicate-instance rejection, build rollback, deterministic parent-to-leaf close, and aggregated close failures.
+- Added BoundedAsyncSectionStorage: one bounded daemon worker, immutable WorldSectionCodec snapshots captured before enqueue, ordered synchronous reads/mappings/iteration, flush barriers, queue backpressure/high-water metrics, worker failure propagation, close draining, and delegate lifecycle ownership.
+- Closed the persistence completion/close race: completedCommands is published before command futures complete, and close joins the worker after its close barrier.
+- Added a public storage-provider SPI and availability diagnostics. The real `file` provider preserves the existing sections/ and mappings/ layout; the real `memory` provider is available for transient sessions and tests.
+- Added StorageRuntimeFactory and wired VoxyClientLifecycle through a one-node storage graph wrapped by the bounded async layer. Forge settings expose storageBackend (default `file`) and storageQueueCapacity (default 256); an unavailable backend fails before WorldEngine construction.
+- Renderer restore metrics now distinguish restored, new, and corrupt sections so restart persistence is directly observable.
+
+External backend boundary
+- RocksDB, LMDB, and Redis are deliberately fail-closed. The target has no RocksDB JNI, LWJGL LMDB, Jedis, or commons-pool2 runtime artifacts, and no complete target adapters have been implemented.
+- RocksDB and LMDB report ADAPTER_NOT_IMPLEMENTED even if a dependency class later appears. Redis additionally reports REFERENCE_CONTRACT_INCOMPLETE because the upstream Redis reference does not implement the target SectionStorage iteratePositions contract.
+- Do not describe provider registration or availability diagnostics as completed RocksDB/LMDB/Redis support. Completing those backends requires explicit dependencies, adapters, persistence/mapping compatibility tests, crash recovery, and runtime gates.
+
+L16 validation
+- Forced all-test gate: 206 tests across 43 suites, zero failures/errors.
+- Initial file-backend PID 19872 reported backend=file and asyncCapacity=256, then passed 10 fixed polls x 2 seconds with terrainDrawn=1, uncovered=0, and l13BuildFailureOccurrences=0. Only that Minecraft JDK17 process was terminated.
+- Restart PID 29956 restored the same durable data and passed 10 fixed polls x 2 seconds. Final evidence was loaded=2041, restored=2041, new=0, corrupt=0, terrainDrawn=1, uncovered=0, and l13BuildFailureOccurrences=0. Only that Minecraft JDK17 process was terminated.
+- Temporary quick-play and generated storage/distance overrides were removed. Restored state is renderingEnabled=true, renderDistance=12, pauseOnLostFocus=true, shaderPack empty, and the original save remains.
+
+L16 completion / next action
+- L16 is complete for the storage graph/config contract, bounded asynchronous lifecycle, production file/memory providers, lifecycle integration, and fail-closed provider diagnostics. External RocksDB/LMDB/Redis adapters remain explicit future work rather than falsely completed scope.
+- Next is L17: port the authoritative Voxy Distant Horizons and Chunky import pipelines to Forge 1.20.1, with bounded progress, cancellation, resumable recovery, mapping/storage integration, and client runtime gates. Distant Horizons remains an optional import source/reference only, never the Voxy renderer target or core dependency.
+
+Voxy Forge 1.20.1 L15 render-pipeline/capability handoff
+Updated: 2026-07-13 04:24 Asia/Taipei
+
+Project target and source baseline
+- The target is Minecraft 1.20.1 Forge.
+- The primary port sources are `参考项目/voxy-mc_1201` (the Minecraft 1.20.1 Fabric implementation) and `参考项目/voxy-neoforge-1.21.1`. `参考项目/neo-voxy-dev` may be consulted only where the two primary sources leave a contract unclear.
+- Distant Horizons 3.2.0b is a Minecraft 1.20.1 rendering-architecture reference. It is not a Voxy port source, bundled library, runtime dependency, or compatibility requirement for the core renderer.
+
+L15 implementation / architecture
+- Added a platform-neutral AbstractRenderPipeline lifecycle with ordered setup, opaque, primary work, draw-call build, temporal, post-opaque, translucent, and finish stages. Failure always restores through finish before fallback and records the exact failed stage.
+- Added NormalRenderPipeline for same-frame translucency, IrisRenderPipeline for deferred Forge/Oculus translucency, and RenderPipelineFactory mode selection. OculusShaderBridge now routes active shader-pack terrain through the Iris mode only when a real terrain pipeline is available.
+- Added context-safe GpuCapabilities detection with an injectable probe. Runtime detection records vendor/version, compute, SSBO, MDI, indirect-count, buffer-storage, DSA, sparse-buffer, int64/subgroup, and SSBO limits without crashing when no GL context exists.
+- Added RenderBackendPolicy with stable ordered fallback reasons. Hardware eligibility is separate from implementation availability: the default policy cannot activate the GPU-driven backend until the caller explicitly marks the complete compute/Hi-Z implementation available.
+- Added the authoritative std430 node ABI: 16-byte uvec4 nodes, full node/root initialization snapshots, defensive copies, absolute node-ID offsets, hole/freed tombstones, and sorted/coalesced dirty upload spans. NodeManager and AsyncNodeManager expose synchronized capture entry points so production callers do not race manager mutation.
+- Added OculusTraversalPipelineAdapter and production probes for opaque, translucent, and shadow sources/framebuffers/depth. GpuSectionRenderer logs capability/backend selection and per-pass traversal ABI status when programs are created.
+
+L15 compatibility boundary
+- The node SSBO layout, initialization snapshot, and incremental upload ABI are now defined and tested. The actual compute traversal shader, request/render queues, Hi-Z construction, and GPU dispatch backend are not implemented yet.
+- Therefore runtime deliberately selects EMBEDDIUM_COMPATIBILITY even on eligible hardware and reports GPU_DRIVEN_BACKEND_NOT_IMPLEMENTED. Oculus probes likewise report nodeSsbo=true but computeTraversal=false and hiZ=false. Do not describe this as native GPU traversal completion.
+- The existing Normal and Oculus geometry paths remain the production renderers. The new pipeline contracts formalize their ordering, deferred translucency, cleanup, and fallback boundary without replacing a validated path with placeholder GL code.
+
+L15 validation
+- Forced all-test gate: 187 tests across 38 suites, zero failures/errors. Final build, jar, and reobfJar passed.
+- Non-shader PID 27836 passed 10 fixed polls x 2 seconds. Intel Iris Xe reported compute=true, ssbo=true, mdi=true, indirectCount=true, bufferStorage=true, and dsa=true, while policy correctly retained EMBEDDIUM_COMPATIBILITY with GPU_DRIVEN_BACKEND_NOT_IMPLEMENTED. Final evidence included terrainDrawn=1, translucentDrawn=1, hierarchyVisited=8, uncovered=0, and l13BuildFailureOccurrences=0.
+- MakeUp/Oculus PID 12024 passed 10 fixed polls x 2 seconds after all three ABI probes and nonzero shadow evidence became valid. OPAQUE, TRANSLUCENT, and SHADOW each reported geometry=true, depth=true, nodeSsbo=true, computeTraversal=false, and hiZ=false. Final evidence included oculusTerrainDrawn=3, oculusShadowDrawn=1, translucentDrawn=3, hierarchyVisited=16, uncovered=0, and l13BuildFailureOccurrences=0.
+- Only the two verified Minecraft PIDs were terminated. Temporary quick-play, shader selection, and generated sectionRenderDistance were removed; renderingEnabled=true, renderDistance=12, pauseOnLostFocus=true, shaderPack empty, and the original save remain.
+
+L15 completion / next action
+- L15 is complete for Normal/Iris pipeline architecture, GPU capability/fallback policy, and the node GPU upload ABI. Native compute/Hi-Z execution remains explicitly unavailable and safely gated.
+- Next is L16: configurable storage graph, background persistence/cache lifecycle, compression adaptors, and RocksDB/LMDB/optional Redis backends, using the two Voxy source trees as the port authority.
+
+L14 implementation / architecture
+- Ported the authoritative four-long NodeStore layout: 24-bit node and geometry IDs, 19-bit request IDs, compact 16-byte GPU-facing encoding, consecutive child allocation, and the 1.21 unsigned request-mask fix.
+- Added a platform-neutral NodeManager with top-level-node ownership, sparse existence masks mapped to consecutive child slots, geometry/cleaner/TLN lifecycle callbacks, dirty-node publication, recursive release, and integrity verification.
+- Added AsyncNodeManager with one explicit worker, bounded command batches, immutable atomic SyncBatch publication/merge, request snapshots, failure propagation, awaitIdle, and deterministic drain/stop behavior. The main-line review closed a submit/stop race by serializing accept/count/enqueue with shutdown.
+- Added CPU NodeCleaner visibility aging and bounded eligible cleanup, plus hardened NodeChildRequest and SingleNodeRequest state contracts.
+- Added HierarchicalOcclusionTraverser. It builds the ancestor closure of the existing hole-free selected cut and rejects whole branches by parent AABB before emitting selected descendants. Negative coordinates use signed floor hierarchy coordinates.
+- GpuSectionRenderer now applies the hierarchy traversal to normal terrain and Oculus terrain/shadow. Opaque and translucent passes reuse the same main-view visible cut. Metrics expose hierarchyVisited and hierarchyPruned.
+
+L14 compatibility boundary
+- The two authoritative Voxy sources depend on a GPU node SSBO, Hi-Z compute traversal, GlBuffer/UploadStream, IGeometryManager, RenderGenerationService, and SectionUpdateRouter stack that this Forge target does not yet contain. L14 preserves their node layout, lifecycle, async publication, cleanup, and top-down traversal semantics without inventing placeholder GPU dependencies.
+- The production compatibility backend currently feeds hierarchy visibility from Embeddium/Oculus AABB predicates. L15 must connect NodeManager/AsyncNodeManager snapshots to the native node SSBO/Hi-Z ABI together with the Abstract/Normal/Iris pipeline and GPU capability fallback policy.
+- Different child-mask updates are semantically correct but conservatively rebuild the affected subtree. The upstream incremental move/preserve optimization remains an L15 performance task.
+
+L14 validation
+- Forced all-test gate: 164 tests across 31 suites, zero failures/errors. The normal and reobfuscated artifacts both passed the final build.
+- Non-shader PID 26884 passed 10 fixed polls x 2 seconds. Final gate evidence included hierarchyVisited=9, hierarchyPruned=6, terrainDrawn=2, translucentDrawn=2, l13BuildFailureOccurrences=0, and uncovered=0.
+- MakeUp/Oculus PID 25940 passed 10 fixed polls x 2 seconds after shader terrain and shadow evidence became valid. Terrain remained active, hierarchy traversal remained valid, and a settled shadow window reached oculusShadowDrawn=3 with hierarchyVisited=18, hierarchyPruned=12, l13BuildFailureOccurrences=0, and uncovered=0. The per-report shadow counter can be zero in intervals without a shadow pass, so the gate retained explicit nonzero shadow evidence across the observation window.
+- Only the two verified Minecraft PIDs were terminated. Gradle daemons were not targeted. Temporary quick-play, shader selection, and generated sectionRenderDistance were removed; renderingEnabled=true, renderDistance=12, pauseOnLostFocus=true, shaderPack empty, and the original save remain.
+
+L14 completion / next action
+- L14 is complete for the current Forge 1.20.1 compatibility architecture. Next is L15: native Abstract/Normal/Iris rendering-pipeline structure, GPU capability detection/fallback, and connection of the L14 node snapshots to the GPU traversal ABI.
+
+L13 implementation / architecture
+- Added the upstream-shaped ModelFactory and RenderDataFactory path with explicit model lookup states and immutable ModelSnapshot capture. Missing or stale model input returns RETRY; unsupported model features return FALLBACK without publishing a partial mesh.
+- VoxyModelCatalog publishes the requested model entries atomically under one generation. Mesh publication rechecks the captured model generation so a resource/model reload cannot publish work built from mixed catalog state.
+- Added StableSectionSnapshot: one immutable 34^3 extended cube containing the complete 32^3 center plus the one-cell face/edge/corner shell from all 26 same-LOD neighbors. Capture uses even revision -> copy -> same even revision validation, with at most three attempts; instability returns RETRY rather than escaping into the render tick.
+- WorldSection writers now use a single-writer revision transaction. WorldUpdater commits each LOD region as one batch, including level-zero occupancy and child-mask metadata, and WorldSectionCodec captures voxel data and metadata from the same synchronized state.
+- LodMeshIntegrationBridge collects model IDs and performs topology, fluid, lighting, biome tint, and ambient-occlusion reads exclusively from the StableSectionSnapshot. Mesh publication requires both the model snapshot and section snapshot to remain current.
+- The shell records source presence separately from the voxel value: a missing neighbor is AIR for culling/AO, while adjacent-light lookup falls back to the host voxel. Snapshot capture does not acquire or release section references.
+
+Known L15 compatibility-bridge limit
+- The current Forge 1.20.1 block-atlas bridge expands RenderDataFactory greedy topology back to per-cell QuadInstance output. This is intentional compatibility behavior: it preserves per-cell atlas UVs, packed light, biome tint, ambient occlusion, and the established 28-byte renderer ABI.
+- Native greedy BuiltMesh output is retained, but large merged faces cannot be submitted directly until L15 provides the model-atlas/repeating-UV and Normal/Iris pipeline contracts. Treat current per-cell expansion as a bounded compatibility bridge, not final RenderDataFactory performance parity.
+
+L13 validation
+- The final main-line forced all-test gate completed 140 tests across 25 suites with zero failures/errors. An independent sub-Agent gate at the preceding source state completed 134 tests and successfully built both the normal and reobfuscated artifacts.
+- The first runtime attempt is explicitly rejected as a pass. It exposed repeated `Stable snapshot coordinate outside one-cell shell` failures: the fluid path calculated a same-fluid horizontal neighbor's complete surface, so a boundary sample at x=32 could incorrectly continue to x=33 (and symmetrically to -2). The algorithm now culls that internal same-fluid face before any second surface calculation; the one-cell shell remains the enforced contract. The associated failure storm was eliminated rather than hidden behind an out-of-range AIR fallback.
+- Final non-shader validation survived 10 fixed polls x 2 seconds with PID 26728. Settled L13 evidence included l13Ready=159, l13Retry=0, l13BuildFailureOccurrences=0, translucentDrawn=3, and uncovered=0. Only the verified client process was terminated after the gate.
+- Final MakeUp/Oculus validation survived 10 fixed polls x 2 seconds with PID 22312. Settled evidence included l13Ready=267, l13Retry=0, l13BuildFailureOccurrences=0, oculusTerrainDrawn=4, oculusShadowDrawn=29, translucentDrawn=3, and uncovered=0. Only the verified client process was terminated after the gate.
+- Restored runtime state is renderingEnabled=true, renderDistance=12, pauseOnLostFocus=true, and shaderPack empty.
+- Cleanup deliberately did not recursively delete the Agent-created `run/shaderpacks/MakeUpUltraFast-master` tree because the isolation policy rejected that destructive operation. MakeUp is no longer selected, but the directory remains on disk and must not be described as removed.
+
+L13 completion / next action
+- L13 is complete for the current Forge 1.20.1 compatibility architecture. The authoritative Voxy port sources remain `参考项目/voxy-mc_1201` plus `参考项目/voxy-neoforge-1.21.1`, with `参考项目/neo-voxy-dev` used only to clarify gaps. Distant Horizons 3.2.0b remains rendering-design reference material only, never a Voxy port source or dependency.
+- Next is L14: port NodeManager and AsyncNodeManager, including node lifecycle/cleanup and hierarchical occlusion traversal, while retaining the validated L13 snapshot/build/result contracts.
+
+Voxy Forge 1.20.1 L12 transparent/fluid parent-LOD handoff
+Updated: 2026-07-12 23:54 Asia/Taipei
+
+L12 implementation
+- Ported the upstream-style mip contract: visible fluid families are selected before dominant solid state, sparse solids become air, block light is averaged, and sky light uses the maximum child value. The selected packed child remains intact.
+- Fluid identity is explicit and normalized to the source FlowingFluid, so source/flowing states, different levels, pure fluid, and different waterlogged hosts vote as one family. Ordinary translucent blocks do not enter fluid selection.
+- VoxyModelCatalog now adds fluid-overlay geometry alongside the host baked model. Fluid quads retain normalized identity, own height, still/flowing atlas sprites, face-correct UVs, and Forge biome-sensitive ARGB tint.
+- LodSectionMeshBuilder keeps opaque and translucent geometry in one LodSectionMesh and one coverage cut. Fluid internal faces are culled only for matching identity and matching height; differing heights keep a conservative boundary rather than opening a hole. Host translucent geometry remains distinct from fluid overlays.
+- Both Embeddium and fallback vertex encoders multiply source alpha by fluid tint alpha. Incremental model/biome bakes now invalidate renderer generation and use mapping identity plus attachment epochs to reject stale queued work.
+- An independent review Agent found and drove fixes for split source/flowing fluid votes, waterlogged identity, internal-face overdraw, host-based tint, lost alpha, fixed-height/rotated UVs, and stale incremental bake races.
+
+L12 validation
+- Final source gate: `./gradlew.bat test build --offline --console=plain` passed. Focused coverage includes fluid-family mip voting, real WATER/FLOWING_WATER normalization, sparse/occluded surfaces, waterlogged hosts, fluid identity/height boundaries, UV/height metadata, tint alpha multiplication, and stale model generation behavior.
+- Non-shader gate at 64 Voxy chunks and 2 vanilla chunks settled at queued=0, selected=99, terrainDrawn=11, translucentCached=117, translucentVisible=5, translucentDrawn=5, fallback=0, missingChildren=0, and uncovered=0. It survived 10 fixed polls x 2 seconds with the verified client alive and no Voxy/GL/framebuffer/shader failure; PID 23800 was then terminated.
+- Official MakeUp Ultra Fast master exercised Oculus terrain/translucent/shadow. The settled gate reached queued=0, oculusTerrainDrawn=11, oculusShadowDrawn=55, translucentCached=116, translucentVisible=5, translucentDrawn=5, fallback=0, missingChildren=0, and uncovered=0. It survived the same 10 x 2 second live-process gate without pass/GL/framebuffer/shader failure; PID 17584 was then terminated.
+- Temporary quick-play, low view distances, lost-focus override, MakeUp archive/selection, and generated distance override were removed. Restored state is renderingEnabled=true, renderDistance=12, pauseOnLostFocus=true, shaderPack empty, and the original save remains.
+- Remaining fluid fidelity is directional/sloped flow and exact waterlogged host occlusion shapes. That belongs to L13's full ModelBakerySubsystem/ModelFactory/RenderDataFactory port rather than extending the L12 conservative fluid cube approximation.
+
+Remaining port plan
+- L13: complete; ModelBakerySubsystem, ModelFactory, RenderDataFactory, stable section/model snapshots, production queue integration, and runtime gates are closed for the current compatibility architecture.
+- L14: complete; NodeStore/NodeManager, AsyncNodeManager, node cleanup, CPU hierarchical traversal, production visibility integration, and dual runtime gates are closed for the compatibility architecture.
+- L15: complete for Abstract/Normal/Iris pipeline architecture, GPU capability/fallback policy, synchronized node SSBO snapshots/uploads, and Oculus pass ABI probing. Native compute traversal/Hi-Z dispatch remains unavailable and explicitly gated.
+- L16: configurable storage graph, background persistence/cache lifecycle, compression adaptors, RocksDB, LMDB, and optional Redis.
+- L17: Distant Horizons and Chunky import pipelines with progress, cancellation, and recovery.
+- L18: taskbar progress, configuration/diagnostics completion, default-on assessment, long-run compatibility and release hardening.
+
+Voxy Forge 1.20.1 post-L11 render-distance control handoff
+
+Post-L11 render-distance implementation
+- Restored upstream Voxy's sectionRenderDistance client setting: default 16, range 2..64, with each unit representing 32 chunks (default 512 chunks).
+- Added the setting as a real Embeddium Voxy-page slider with English and Simplified Chinese labels, tooltip, and chunk-count display.
+- LodCoverageSelector now clips its single parent-or-children coverage cut to the configured horizontal range. It uses section AABB/radius intersection, including signed coordinates and large coarse sections crossing the boundary, rather than center-only clipping.
+- The same selected cut continues to feed opaque, translucent, Oculus terrain, and Oculus translucent draws. Oculus shadows reuse that cut and retain their additional shader-pack shadow-distance bound.
+- Missing-child loading and eviction protection inherit the bounded selection. Periodic metrics expose renderDistanceChunks so runtime gates can prove the setting reached renderer behavior.
+
+Post-L11 render-distance validation
+- 38 tests passed, including UI option/default coverage plus configured boundary inclusion, outside exclusion, signed-coordinate, and large-section intersection cases.
+- A temporary run used sectionRenderDistance=2 and reported renderDistanceChunks=64. The active gate reached terrainDrawn=3 with uncovered=0; after rebuilding settled it reached queued=0, fallback=0, missingChildren=0, uncovered=0, and selected=39.
+- The valid gate survived 10 fixed polls x 2 seconds without a Voxy failure, GL_INVALID marker, incomplete framebuffer, or shader compilation failure. Only the verified Voxy client PID 21548 was terminated afterward.
+- Temporary quick-play arguments and the distance override were removed. The pre-run renderingEnabled=true workspace value, renderDistance=12, empty shaderPack, and original save remain intact.
+
+Voxy Forge 1.20.1 L11 MakeUp/Oculus compatibility handoff
+
+L11 implementation
+- Validated against the official MakeUp Ultra Fast repository master rather than another synthetic shader. MakeUp includes terrain, water/translucent, shadow, composite stages and native newer-Voxy metadata, making it a representative production compatibility target for the Oculus 1.8.0 bridge.
+- OculusTerrainProgram now has independent TERRAIN, TRANSLUCENT, and SHADOW programs. The translucent Forge stage consumes Oculus' transformed water sources, framebuffer, terrain samplers/images, blend overrides, and the existing sorted Voxy translucent stream.
+- Corrected the production-shader coordinate contract exposed by MakeUp. Voxy now keeps Oculus' base model-view matrix and submits camera-relative section/region translation through u_RegionOffset. Moving translation into model-view produced correct clip positions for the synthetic pack but broke MakeUp world-space lighting/wind calculations.
+- Per-draw iris_ModelViewMatrixInverse, iris_ProjectionMatrixInverse, and iris_NormalMatrix are synchronized with the submitted forward matrices. This prevents fragment/world reconstruction from using Oculus' prior vanilla-chunk matrix state.
+- Every program reports pass, geometry/tessellation stage presence, framebuffer ID, global/per-buffer blend overrides, and active image count. First bind verifies GL_FRAMEBUFFER_COMPLETE and restores program/blend/FBO state if binding fails.
+- Terrain, translucent, and shadow failures are isolated per pass. A failed pass is disabled until SodiumTerrainPipeline identity changes; a pipeline reload closes old programs, clears only the pass failure set, and permits reconstruction.
+- Shadow rendering now conservatively clips selected sections against ShadowRenderer.renderDistance using section AABB distance without driving LodCoverageSelector or mutating main-view coverage. A focused signed/boundary test covers the distance contract.
+- Distant Horizons 3.2.0b was audited before changing transparent selection. DH renders the same selected LodBufferContainer set for both passes; each container owns parallel opaque and transparent VBO arrays. Based on that proven contract, Voxy retains one coverage cut and keeps depth writes/color mask enabled for the Oculus translucent terrain pass. Transparent preservation in coarse parent data is assigned to L12 rather than adding an incorrect descendant selector.
+
+L11 validation
+- All three MakeUp programs compiled and linked: terrain framebuffer 144, translucent framebuffer 145, and shadow framebuffer 142. MakeUp exercised a shadow global blend override; its selected profile did not use geometry/tessellation stages, buffer-specific blend overrides, or images, and diagnostics recorded those as false/zero rather than leaving them implicit.
+- The first MakeUp run exposed large black/incorrect distant surfaces despite nonzero draw counters. That visual gate was rejected and retained as build/l11-makeup-first.png. Restoring u_RegionOffset semantics fixed the production shader coordinate chain.
+- Final accepted MakeUp gate reached queued=0, regional=179, regions=8, selected=71, visible=6, terrainDrawn=6, regionBatches=1, oculusTerrainDrawn=6, oculusShadowDrawn=21, fallback=0, missingChildren=0, uncovered=0, and transitions=117.
+- The accepted state survived 10 fixed polls x 2 seconds with no Voxy pass failure, GL_INVALID marker, incomplete framebuffer, or shader compilation failure. Window-specific visual evidence is build/l11-makeup-window.png and shows MakeUp terrain texture, vegetation, moon lighting, fog, and corrected distant geometry.
+- A temporary isolated-world glass test proved translucent program creation plus translucentCached/translucentSorts uploads. It did not produce translucentDrawn because the selected coarse parent LOD discarded the transparent material. The DH audit confirms this is a parent-data/mip generation gap for L12, not a reason to select overlapping child geometry in L11.
+- Temporary MakeUp download, isolated validation world, shader selection, rendering override, server-view hook, quick-play arguments, and reduced client view distance were removed/restored. Defaults are renderingEnabled=false, shaderPack empty, and renderDistance=12.
+- Final source gate: `.\gradlew.bat test build --offline --console=plain` passed after cleanup. All 35 tests report zero failures/errors; jar and reobfJar completed successfully.
+
+L11 remaining scope / next action
+- MakeUp's active profile did not exercise optional geometry/tessellation stages, custom images, or indexed per-target blend overrides. Those diagnostics and attachment paths remain available for a later second-pack compatibility matrix.
+- L12 should follow the DH container contract: preserve/build transparent geometry in the same selected coarse parent container as opaque geometry, then rerun MakeUp until translucentDrawn is nonzero without child overlap. This belongs with material/fluid/downsampling correctness, not the Oculus pass bridge.
+
+Voxy Forge 1.20.1 L10 Oculus terrain/shadow handoff
+Updated: 2026-07-12 21:05 Asia/Taipei
+
+L10 implementation
+- Added OculusTerrainProgram, which compiles Oculus SodiumTerrainPipeline transformed terrain and shadow sources against Voxy's established 28-byte indexed vertex ABI. It supports vertex, fragment, geometry, tessellation-control, and tessellation-evaluation stages.
+- The adapter replaces Embeddium compressed position/material/draw-ID decoding with Voxy float3 positions, normalized RGBA8 color, float2 atlas UV, and ushort2 light. A focused test covers the rewritten ABI and rejects unresolved compressed-position access.
+- Terrain and shadow programs reuse Oculus framebuffer, blend overrides, uniforms, samplers, and images. Voxy overrides model-view/projection per section or region while retaining the shader pack's transformed sources and render-target contract.
+- GpuSectionRenderer caches programs by SodiumTerrainPipeline, closes them on pipeline/world teardown, dispatches both per-section and regional multi-draw geometry, and reports oculusTerrainDrawn and oculusShadowDrawn independently.
+- Fixed regional uploads being incorrectly gated on the non-shader VoxyTerrainProgram. Regional arenas now work in Oculus mode and remain shared with the non-shader path.
+- Added OculusShadowRendererMixin at the bytecode-verified point immediately after Oculus renders its third opaque/cutout chunk layer and before viewport restoration, entity terrain, mipmaps, and shadow composites. The hook uses Oculus shadow model-view/projection and the existing main-view LOD coverage cut.
+- Shadow submission deliberately does not drive LodCoverageSelector a second time. An initial validation exposed main/shadow threshold oscillation with millions of transitions; reusing frameCoverage removed that regression and kept transitions stable at 117.
+- Non-shader L9 terrain/SSAO remains the fallback when no shader pack is active. Rendering remains default-off.
+
+L10 validation
+- A temporary local validation pack exercised both gbuffers terrain and shadow sources. `shadow.enabled=true` was required because Oculus allocates ShadowRenderTargets only when a pack consumes shadow resources or explicitly enables them.
+- Runtime established `shadowProgram=true`, `Voxy Oculus terrain program active`, and `Voxy Oculus shadow program active`.
+- Final settled gate reached loaded=277, queued=0, cached=175, regional=175, regions=8, selected=71, visible=6, terrainDrawn=6, regionBatches=1, oculusTerrainDrawn=6, oculusShadowDrawn=71, fallback=0, missingChildren=0, uncovered=0, and transitions=117.
+- The valid state was observed for a fixed 10 polls x 2 seconds. Terrain/shadow counters repeatedly remained nonzero, regional batching stayed active, and no Voxy shader failure, GL_INVALID marker, incomplete framebuffer, or shader compilation failure appeared.
+- Visual evidence is D:\document\dev\GitHub\voxy-1.20.1\build\l10-oculus-shadow-gate.png. It is nonblank and shows textured terrain, water, vegetation, sky, and no prior black-distance failure.
+- Only verified client PID 21084 was terminated after the 20-second gate. No matching Voxy client remains.
+- Temporary shader pack, shader selection, quick-play arguments, rendering override, and reduced render distance were removed/restored. Final defaults are renderingEnabled=false, shaderPack empty, and renderDistance=12.
+- Final source gate: `.\gradlew.bat test build --offline --console=plain` passed after cleanup. All 34 tests remain at zero failures/errors; jar and reobfJar completed successfully.
+
+L10 remaining scope / next action
+- L10 proves Oculus 1.8.0 terrain and shadow program/framebuffer integration with the validation pack. Broader compatibility still requires real-world packs with geometry/tessellation stages, custom images, non-default blend targets, and shadow options.
+- Shadow currently submits the established main-view coverage cut without a second light-frustum reduction. This preserves coverage correctness and avoids selector oscillation but can overdraw up to the selected section count in the shadow pass.
+- Next action is L11 shader-pack compatibility hardening: test at least one representative production pack, add per-pass diagnostics for transformed stage combinations, and introduce a conservative shadow culler that understands large LOD section spans without mutating main-view coverage.
+
+Voxy Forge 1.20.1 Embeddium video-settings page handoff
+Updated: 2026-07-12 19:53 Asia/Taipei
+
+Configuration UI implementation
+- Voxy now contributes a dedicated Voxy page to Embeddium's video settings through the public OptionGUIConstructionEvent API. No SodiumOptionsGUI mixin or reflected page mutation is used.
+- The page exposes only implemented runtime controls: distant terrain rendering, SSAO enablement, SSAO strength (0-100 percent), and GPU cache budget (64-2048 MiB).
+- Controls use stable voxy option/page/group identifiers, Embeddium tickbox/slider widgets, Chinese and English translations, and ForgeConfigSpec-backed storage. Applying changes saves run/config/voxy-client.toml.
+- GPU budget eviction now reads the configured value at runtime; the existing voxy.maxGpuMiB JVM property remains a stress-test override. SSAO enablement and strength are also read per frame, so the UI is not a disconnected facade.
+- Client setup registers the Embeddium page listener once. The current config was automatically corrected with defaults: renderingEnabled=false, ssaoEnabled=true, ssaoStrength=1.0, maxGpuMiB=256.
+
+Configuration UI validation
+- A focused test constructs the page against an in-memory Forge config and verifies its Voxy page ID, three groups, and exact four option IDs.
+- `.\gradlew.bat test build --offline --console=plain` passed after temporary validation hooks were removed. All 33 tests report zero failures and errors.
+- Runtime log confirms `Added Voxy page to Embeddium video settings`. The user opened and visually confirmed the page and then exited the client normally; the log contains `Minecraft: Stopping`, full Voxy persistence teardown, and no page/config exception.
+- No validation JVM property, quick-play argument, deprecated SodiumOptionsGUI entry point, or Voxy client process remains.
+
+Next action
+- Resume L10 Oculus terrain framebuffer/program and shadow-pass integration. The Voxy page should later gain shader-pack-specific controls only after those paths are actually functional.
+
+Voxy Forge 1.20.1 L9 depth/normal SSAO pipeline handoff
+Updated: 2026-07-12 14:19 Asia/Taipei
+
+L9 implementation
+- Added a dedicated VoxySsaoPipeline with an owned RGBA normal texture and depth attachment. It follows the main framebuffer size, rebuilds on resize, and explicitly destroys its framebuffer, textures, shaders, and fullscreen VAO during world teardown.
+- After opaque Voxy terrain is drawn, the pipeline copies the main scene depth, clears only its normal attachment, and redraws exactly the visible native/regional opaque geometry. The normal prepass depth-tests against copied vanilla+Voxy depth, preserves that depth, derives view-space normals with screen derivatives, and respects block-atlas alpha cutout.
+- A bounded eight-direction fragment SSAO pass reconstructs view positions from copied depth and inverse projection, caps multiplication darkening at 32 percent, and multiplies the main framebuffer without sampling its attached color texture. It fades to neutral using the same FogStart/FogEnd contract as the terrain program.
+- VoxyTerrainProgram and the new normal program share a small VoxyGeometryProgram binding contract, so per-section and regional multi-draw geometry is reused without duplicating meshes or changing the 28-byte vertex format.
+- SSAO creation/runtime failures restore the main framebuffer and render state, disable only SSAO for the session, and retain the L8 forward terrain path. Partial shader creation, resize failure, and teardown all have explicit cleanup paths.
+- Metrics now report ssaoDraws and cumulative ssaoFrames.
+
+L9 validation
+- `.\gradlew.bat compileJava test` passed before runtime validation. Final `.\gradlew.bat test build --offline --console=plain` passed after lifecycle hardening; all 32 tests remain at zero failures/errors.
+- First run reached ssaoDraws=14 and proved the prepass/composite were active, but its screenshot showed SSAO silhouettes for geometry already hidden by linear fog. That run was explicitly rejected, and only verified PID 324 was terminated after more than 20 seconds.
+- Fog attenuation was added to the composite shader. The repeat reached cached=201, regional=200, regions=8, drawn=14, terrainDrawn=14, regionBatches=4, ssaoDraws=14, fallback=0, missingChildren=0, and uncovered=0.
+- In the fixed ten-poll / 20-second window, all fourteen terrain/SSAO draws and four regional batches stayed stable while ssaoFrames advanced from 38242 to 46270. Latest settled evidence reached ssaoFrames=57575 with allocatedMiB=89.28 and no coverage loss.
+- No GL_INVALID_OPERATION, GL_INVALID_FRAMEBUFFER_OPERATION, incomplete framebuffer, SSAO/terrain-program failure, arena/buffer failure, or Voxy exception was found. Only verified PID 30044 was terminated after the valid gate.
+- Failed visual evidence is retained as D:\document\dev\GitHub\voxy-1.20.1\build\l9-ssao-first.png. The corrected capture D:\document\dev\GitHub\voxy-1.20.1\build\l9-ssao-fog-fixed.png is nonblank, has no sky silhouettes/black frame/state leak, and matches the prior terrain/fog composition with bounded near-field AO.
+- Temporary quick-play/render-distance/rendering overrides were removed. Defaults are renderingEnabled=false and renderDistance=12, and no matching Voxy client remains.
+
+L9 remaining scope / next action
+- L9 completes a non-shaderpack depth/normal target and bounded SSAO composite for opaque native/regional Voxy geometry. Vanilla fallback and translucent geometry intentionally do not contribute normals; Oculus shader-pack mode remains gated and bypasses the pipeline.
+- Next action is L10: bind the established indexed vertex/material contract to Oculus terrain framebuffer/program/sampler state, then add a shadow-pass path using the same section selection and buffer ownership. Keep the non-shader pipeline as the fallback and validate with an actual selected shader pack rather than only IrisApi state.
+
+Voxy Forge 1.20.1 L8 occupancy-driven ambient-occlusion handoff
+Updated: 2026-07-12 13:57 Asia/Taipei
+
+L8 implementation
+- LodSectionMesh quad instances now carry four independent 8-bit ambient-occlusion factors without changing the established 28-byte GPU vertex stride. Both Embeddium indexed uploads and the vanilla fallback multiply the factor into the existing tint/directional-shade result.
+- The mesh builder samples the two face-plane side voxels and their corner for each vertex. Fully occupied corners use 128, two occupied samples use 153, one uses 204, and open corners remain 255.
+- Occupancy is driven by MappingRegistry opacity through VoxyModelCatalog rather than by non-air status. Cutout/translucent neighbors therefore do not incorrectly occlude a corner. AO is limited to opaque/cutout quads whose model and baked quad both opt into ambient occlusion; translucent, unculled, and non-AO material stays at 255.
+- Six same-LOD neighbor sections are reused at boundaries. Samples requiring two simultaneously crossed section boundaries conservatively remain open because the current renderer does not acquire diagonal neighbors.
+
+L8 validation
+- Two focused tests cover a three-occluder corner producing per-vertex factors [128,204,255,204] and the same geometry with non-opaque neighbors remaining [255,255,255,255]. The existing exact indexed-layout and translucent-order tests remain green.
+- `.\gradlew.bat test build --offline --console=plain` passed after all temporary launch/config changes were removed. All 32 tests report zero failures and errors.
+- The first runClient at renderDistance=12 completed a fixed 20-second process/coverage observation but was rejected as a rendering gate because the current view selected no frustum-visible Voxy sections after budget convergence; it was not reported as visual success. Only verified PID 19332 was terminated.
+- The repeat at renderDistance=2 reached cached=201, regional=200, regions=8, visible=14, drawn=14, terrainDrawn=14, regionBatches=4, drawnLod=[10,4,0,0,0], fallback=0, missingChildren=0, and uncovered=0.
+- A fixed ten-poll / 20-second window kept all fourteen terrain draws and four regional batches stable with queued=0 and no fallback or coverage loss. No GL_INVALID_OPERATION, indexed/regional/translucent-buffer failure, terrain-program failure, or Voxy exception was found. Only verified PID 28256 was terminated.
+- Visual capture is D:\document\dev\GitHub\voxy-1.20.1\build\l8-ambient-occlusion.png; it is nonblank and shows no black faces, color overflow, or leaked render state. Defaults are restored to renderingEnabled=false and renderDistance=12, and no Voxy client remains.
+
+L8 remaining scope / next action
+- L8 establishes the occupancy-derived material signal and visible per-vertex ambient shading for the current forward renderer. It is not upstream's full screen-space compute SSAO, which requires a depth/normal target, sampling pass, and framebuffer composition.
+- Next action is L9: introduce an owned depth/normal prepass target and a bounded SSAO composite that coexists with vanilla/Embeddium framebuffers. After the non-shader framebuffer lifecycle is stable, bind the same terrain contract to Oculus terrain and shadow programs.
+
+Voxy Forge 1.20.1 L7 translucent stream handoff
+Updated: 2026-07-12 13:42 Asia/Taipei
+
+L7 implementation
+- EmbeddiumIndexedBuffer can now encode one material pass at a time. Opaque/cutout geometry keeps its existing indexed order, while translucent quads are sorted back-to-front by their camera-relative centers before index generation.
+- GpuSectionRenderer owns independent opaque and translucent buffers per section. Opaque geometry remains in the L5/L6 regional arenas; translucent geometry deliberately uses per-section native buffers so re-sorting does not churn shared arena allocations.
+- The Forge render bridge submits opaque geometry after solid blocks and translucent geometry after translucent blocks. The translucent pass enables depth testing and default alpha blending, disables depth writes and culling, then restores all affected state.
+- Visible translucent sections are ordered back-to-front each frame. A section requeues its translucent stream only after the camera moves more than 16 blocks from its last sort origin, avoiding stationary per-frame uploads.
+- Metrics now expose translucentCached, translucentVisible, translucentDrawn, and translucentSorts. A focused unit test verifies back-to-front quad index ordering.
+
+L7 validation
+- `.\gradlew.bat test build --offline --console=plain` passed after temporary validation code and launch arguments were removed. All 30 tests report 0 failures, 0 errors, and 0 skipped.
+- An isolated copy of the existing world received a temporary blue stained-glass wall for this gate only. The temporary hook, quick-play arguments, validation world, rendering override, and reduced render distance were removed/restored afterward; renderingEnabled is false and renderDistance is 12.
+- Active metrics reached translucentCached=4, translucentVisible=1, translucentDrawn=1, translucentSorts=4 alongside regional=201, regions=8, drawn=14, terrainDrawn=14, regionBatches=4, fallback=0, missingChildren=0, and uncovered=0.
+- A fixed ten-poll / 20-second stationary window kept queued=0, uncovered=0, translucentDrawn=1, and translucentSorts=4. This proves the transparent stream remained visible without per-frame re-sorting or coverage regression.
+- No translucent-buffer failure, GL_INVALID_OPERATION, shader/arena failure, or Voxy exception was found. The nonblank gameplay capture is D:\document\dev\GitHub\voxy-1.20.1\build\l7-translucent-stream.png. Only the verified Voxy client PID 16420 was terminated after the observation window, and no matching client process remains.
+
+L7 remaining scope / next action
+- L7 completes a separately sorted non-shader translucent stream and explicit blend/depth state. It does not yet implement fluid-specific geometry, per-pixel partial tint masks, SSAO/occupancy, GPU-driven visibility/indirect commands, or Oculus terrain/shadow programs.
+- Next action is L8: add the upstream-style occupancy/SSAO material signal without breaking the L2 lighting contract, validate opaque and translucent state together, then begin Oculus terrain/shadow binding only after that non-shader gate is stable.
+
+Voxy Forge 1.20.1 L6 allocated-capacity budget handoff
+Updated: 2026-07-12 13:22 Asia/Taipei
+
+L6 implementation
+- GPU eviction now budgets actual device allocation rather than only live mesh bytes. Allocated usage is the sum of regional GlBufferArena capacities plus non-regional section buffers; gpuMiB remains the live-data metric so fragmentation is observable.
+- The default budget remains 256 MiB and can be overridden with the voxy.maxGpuMiB JVM property for deterministic stress validation. Values below 16 MiB are clamped to 16 MiB.
+- Regional allocations now return through their owning pool. Releasing the final allocation in a region immediately deletes its MultiDrawBatch, tessellation, vertex arena, and index arena and removes the region map entry. Replacement is safe because the new allocation is installed before the old one is released.
+- Metrics now expose allocatedMiB and cumulative reclaimedRegions alongside arenaMiB, gpuMiB, and evictions.
+
+L6 validation
+- .\gradlew.bat test build --offline --console=plain: PASS after restoring temporary settings. 29 tests across 12 suites, zero failures/errors.
+- A temporary voxy.maxGpuMiB=64 run forced the previously 90+ MiB regional cache through the real budget path. It converged to allocatedMiB=55.84 after 137 section evictions and one complete region reclamation: cached=40, regional=40, regions=7, queued=0, fallback=0, missingChildren=0, uncovered=0.
+- The low-budget result remained stable for a fixed ten-poll / 20-second window: allocatedMiB stayed exactly 55.84, evicted stayed 137, reclaimedRegions stayed 1, and queued stayed 0 while coverage remained complete. Only PID 26508 was terminated.
+- A default 256 MiB repeat restored the full cache and settled at cached=201, regional=200, regions=8, drawn=14, terrainDrawn=14, regionBatches=4, drawnLod=[10,4,0,0,0], allocatedMiB=94.22, uncovered=0. It remained stable for another fixed ten-poll / 20-second window before only PID 18932 was terminated.
+- Neither run reported arena fallback, upload failure, GL_INVALID_OPERATION, Voxy exception, or a new crash.
+
+Restored state / next action
+- Removed the temporary maxGpuMiB override and quick-play arguments, restored renderingEnabled=false and renderDistance=12, and confirmed no forgeclientuserdev process remains.
+- L6 completes empty-region reclamation and capacity-aware budgeting for opaque/cutout regional arenas. The next renderer gap is a separate translucent mesh stream with stable camera-relative sorting and blend/depth-write state; SSAO/occupancy and Oculus terrain/shadow integration remain later gates.
+
+Voxy Forge 1.20.1 L5 regional arena and multi-draw handoff
+Updated: 2026-07-12 13:11 Asia/Taipei
+
+L5 implementation
+- Added EmbeddiumRegionalBuffer. World geometry is partitioned into signed 512-block regions; every region owns one Embeddium GlBufferArena for 28-byte vertices, one arena for 32-bit indices, one shared tessellation, and a reusable MultiDrawBatch.
+- Reused Embeddium's production free-list arena instead of introducing a parallel allocator. It provides adjacent-free-segment merging, staging uploads, automatic growth, old-buffer copies, and segment offset repair. Tessellation is rebuilt whenever either arena replaces its backing buffer.
+- Section vertices are encoded relative to the region origin. Each section owns only a vertex segment, index segment, index count, and byte accounting. Replacement and eviction return both segments to their arenas; world detach deletes batches, tessellations, arenas, and the shared fallback staging buffer.
+- Visible shared sections are grouped by region. One terrain-program bind and one MultiDrawBatch submission now draws every visible section in that region using index byte offsets and base-vertex offsets. The L3 per-section native buffer and vanilla buffer remain layered fallbacks.
+- Metrics now distinguish regional sections, live regions, per-frame region batches, used geometry bytes, and arena capacity bytes.
+
+L5 validation
+- .\gradlew.bat test build --offline --console=plain: PASS after restoring temporary settings. 29 tests across 12 suites, zero failures/errors.
+- New signed-region test covers 0/511/512 and negative boundary floor division, including exact region origins.
+- First run settled at cached=202, native=202, vanilla=0, regional=201, regions=8, drawn=14, terrainDrawn=14, regionBatches=4, uncovered=0. Four shared multi-draw calls replaced fourteen section draws. It remained stable for a fixed ten-poll / 20-second window before only PID 22496 was terminated.
+- Cold-start repeat settled at regional=200, regions=8, drawn=14, regionBatches=4, drawnLod=[10,4,0,0,0]. Arena capacity grew from 84.12 MiB to 89.62 MiB while replacement uploads temporarily held old and new segments, then stayed exactly 89.62 MiB through an additional fixed ten-poll / 20-second window while uploads continued, proving free-list reuse rather than unbounded growth. Only PID 29236 was terminated.
+- Both runs held queued=0, fallback=0, missingChildren=0, uncovered=0, vanilla=0. No arena fallback, failed upload, shader failure, GL_INVALID_OPERATION, Voxy exception, or new crash report occurred.
+
+Restored state / next action
+- Restored renderingEnabled=false, renderDistance=12, and removed quick-play arguments. No forgeclientuserdev process remains.
+- L5 completes shared regional allocation and CPU-built multi-draw submission for the current opaque/cutout pass. Empty-region reclamation, a global arena budget based on allocated capacity, translucent geometry/sorting, and GPU-driven visibility/indirect commands remain incomplete.
+- Next action: add empty-region reclamation plus allocated-capacity budgeting/eviction, then implement a separate translucent mesh stream with camera-relative sorting. Keep Oculus work gated until those non-shader resource and ordering contracts are stable.
+
+Voxy Forge 1.20.1 L4 dedicated terrain program handoff
+Updated: 2026-07-12 12:55 Asia/Taipei
+
+L4 implementation
+- Added VoxyTerrainProgram using Embeddium 0.3.31 GlShader/GlProgram ownership. The native indexed section path no longer depends on Minecraft's position_color_tex_lightmap ShaderInstance when the dedicated program compiles successfully.
+- The program binds the L3 attributes explicitly: float3 local position, normalized RGBA8, float2 block-atlas UV, and integer ushort2 lightmap coordinates. It owns matrix, atlas, dynamic lightmap, color modulation, fog distance/shape, and fog color/range uniforms.
+- The fragment path samples both the block atlas and Minecraft's dynamic lightmap, performs alpha cutout, and applies vanilla-shaped linear fog. This closes an important prototype gap: Minecraft's position_color_tex_lightmap fragment shader accepted UV2 but did not actually sample the lightmap.
+- Program compile/link/delete uses Embeddium objects inside managed-code boundaries. Failure pins the session to the already validated L3 ShaderInstance path. Metrics now expose terrainDrawn separately from native buffer count and total draws.
+
+L4 validation
+- .\gradlew.bat test build --offline --console=plain: PASS after restoring temporary run settings. 28 tests across 11 suites, zero failures/errors.
+- New shader-contract test requires integer light input, atlas and lightmap consumption, fog consumption, and standalone GLSL without unresolved Mojang imports.
+- The first run compiled the program and produced moving-camera evidence before an old Windows input queue cleanly exited Minecraft: camera moved from (-5.4,-5.9) to (-0.3,-24.0), terrainDrawn=14, drawnLod=[10,4,0,0,0], uncovered=0. Logs prove this was a normal UI-driven exit and BUILD SUCCESSFUL, not a crash.
+- The clean repeat settled at native=202, vanilla=0, drawn=14, terrainDrawn=14, fallback=0, missingChildren=0, uncovered=0, drawnLod=[10,4,0,0,0], and remained stable for a fixed ten-poll / 20-second observation window. Only PID 17556 was terminated afterward.
+- A third run reproduced terrainDrawn=14 and the same coverage invariants, captured build/l4-terrain-program.png from the actual Minecraft window, then remained stable for another fixed ten-poll / 20-second window. Only PID 16544 was terminated afterward.
+- The screenshot is nonblank and shows the real world with block-atlas textures, cutout vegetation, depth-tested terrain, sky, and dynamic light/fog output. No terrain fallback, shader compile/link failure, GL_INVALID_OPERATION, Voxy exception, or new crash report occurred.
+
+Restored state / next action
+- Restored renderingEnabled=false, renderDistance=12, and removed quick-play arguments. No forgeclientuserdev process remains.
+- This completes the dedicated non-shader terrain program contract for per-section L3 buffers. Shared regional allocation/batching, translucent geometry/sorting, SSAO/occupancy, and Oculus terrain/shadow programs remain incomplete.
+- Next action: implement shared regional vertex/index allocation with free-list reuse and per-frame batched MultiDrawBatch submission. Keep the current per-section tessellation path as fallback until allocation churn, eviction, and moving coverage are proven.
+
+Voxy Forge 1.20.1 L3 indexed device buffer handoff
+Updated: 2026-07-12 12:35 Asia/Taipei
+
+L3 implementation
+- Added EmbeddiumIndexedBuffer around the exact Embeddium 0.3.31 internal device API. Each non-empty opaque/cutout section now owns a managed GlMutableBuffer vertex buffer, a 32-bit index buffer, a GlTessellation binding, and an indexed MultiDrawBatch command.
+- Defined and tested the current vanilla-compatible 28-byte vertex contract: float3 local position, normalized RGBA8, float2 atlas UV, and integer ushort2 lightmap. Quads are converted to indexed triangles with 0,1,2 / 2,3,0 ordering while preserving the L2 tint, directional shade, emission, and adjacent-light results.
+- Native buffers are created, uploaded, drawn, replaced, evicted, and deleted through RenderDevice managed-code boundaries. Tessellation, index buffer, vertex buffer, and native draw-command memory all have explicit deletion; close is idempotent.
+- GpuSectionRenderer now prefers the Embeddium indexed path for the supported pass. If device creation or upload throws, the session is pinned to the previous vanilla VertexBuffer path rather than repeatedly faulting. Empty meshes retain the L1 readiness behavior.
+- Renderer metrics now report native and vanilla cached buffer counts independently, so runtime evidence does not infer native activation merely from the absence of an exception.
+
+L3 validation
+- .\gradlew.bat test build --offline --console=plain: PASS after restoring all temporary run settings. 27 tests across 10 suites, zero failures/errors.
+- New CPU layout test verifies exact position/color/UV/light byte offsets, lightmap channel packing, indexed triangle order, and exclusion of translucent geometry from this pass.
+- First valid native run settled at queued=0, drawn=16, uncovered=0 and remained stable for a fixed ten-poll / 20-second observation window before only PID 20128 was terminated.
+- The explicit-metric repeat settled at cached=188, native=188, vanilla=0, drawn=16, fallback=0, missingChildren=0, uncovered=0, gpuMiB=65.64, cachedLod=[83, 49, 36, 12, 8]. It remained stable for another fixed ten-poll / 20-second window before only PID 19812 was terminated.
+- A third client reached cached=187, native=187, vanilla=0 with the same coverage invariants and stayed stable through repeated observation attempts. Windows rejected programmatic foreground focus, so injected movement did not change the camera; this run is recorded only as an additional standing stability pass, not a movement pass. PID 22188 was terminated afterward.
+- No run reported the native-buffer fallback, GL_INVALID_OPERATION, Voxy exception, or fatal marker. Remaining ClassNotFoundException warnings are optional Oculus compatibility targets.
+
+Restored state / next action
+- Restored run/config/voxy-client.toml renderingEnabled=false, run/options.txt renderDistance=12, and removed the temporary quick-play arguments from build.gradle. No forgeclientuserdev process remains.
+- L3 completes native indexed buffer ownership for the current non-shader opaque/cutout path. It does not yet use Embeddium's terrain shader/material program, share regional allocations, sort translucent geometry, or integrate Oculus terrain/shadow programs.
+- Next action is L4: replace the vanilla shader-compatible attribute contract with a dedicated terrain program/material contract, batch sections into shared allocations, then add translucent sorting. Keep Oculus shader-pack integration gated until the non-shader terrain path passes visual and moving-camera validation.
+
+Voxy Forge 1.20.1 L2 material contract handoff
+Updated: 2026-07-12 12:15 Asia/Taipei
+
+L2 implementation
+- BakedBlockModel now records block emission and each quad's typed material pass plus self-light versus adjacent-light decision. Boundary-aligned opaque/cutout faces sample the adjacent voxel; inset, unculled, and translucent faces retain self light.
+- LodSectionMesh quad instances now carry resolved packed light and RGB tint. Emission raises only the block-light nibble, preserving sky light. Adjacent sampling works inside a section and across all six WorldSection boundaries, with self-light fallback when a boundary neighbor is unavailable.
+- VoxyModelCatalog builds a lazy per-block/per-biome/per-tint-index color LUT through Forge BlockColors and a single-biome BlockAndTintGetter. Vanilla quad tint indices provide quad-granularity partial-face tint without requiring the upstream six-face texture bakery yet.
+- The vertex path multiplies baked vertex RGB by biome tint and directional shade, and submits the resolved packed light. String render-layer classification moved into typed model metadata.
+- Runtime catalog metrics now report emissive models, tinted quads, adjacent-light quads, and populated tint LUT entries.
+- Fixed an L1 persistence edge exposed by low render distance: WorldEngine now exposes a filtered persisted-key snapshot and GpuSectionRenderer eagerly restores only stored MAX_LOD_LEVEL roots. Hierarchical lazy loading can therefore start even when active vanilla chunks contain no root section.
+
+L2 validation
+- .\gradlew.bat test build --offline --console=plain: PASS. 26 tests, zero failures/errors. New focused tests verify emission minimum without sky-light corruption, cross-section adjacent lighting, biome/tint-index propagation, and typed material passes.
+- Runtime catalog generation contained 489 block models: 92 emissive models, 237 tinted quads, and 1,562 adjacent-light quads.
+- Final reduced-radius quick-play pass proved persisted-root discovery and active material rendering with only 289 loaded sections: ready=289, tintLut=21, selected=115, visible=16, drawn=16, gpuMiB=54.19, cachedLod=[83, 48, 36, 12, 8].
+- The 20-second post-activation window remained stable: queued=0, fallback=0, missingChildren=0, uncovered=0, evicted=0, and drawn=16. The spawned client PID was terminated after the window; rendering, quick-play, and render-distance settings were restored.
+
+L2 remaining scope / next action
+- This completes the packed material/light/tint contract for the current baked-quad renderer. It does not complete upstream texture baking, per-pixel tint masks, fluids/translucent sorting, SSAO/occupancy, or the Embeddium-native indexed vertex contract.
+- Next action is L3: define the indexed vertex/material layout, create managed Embeddium RenderDevice buffers and tessellation bindings, migrate one opaque/cutout pass with explicit deletion, then repeat the same coverage/material runtime gates before removing the vanilla VertexBuffer path.
+
+Voxy Forge 1.20.1 L1 coverage handoff
+Updated: 2026-07-12 10:50 Asia/Taipei
+
+L1 implementation
+- Added a tested CPU LodCoverageSelector. It traverses from LOD4 roots and enforces parent fallback until every non-empty child required outside the vanilla render radius is ready; a completed child set replaces its parent without overlap.
+- Added 10% LOD threshold hysteresis based on the previous coverage cut, signed-coordinate child derivation, sparse child masks, explicit empty-mesh readiness, and boundary-parent fallback where a parent overlaps the vanilla radius but an outside child is incomplete.
+- The selector exposes selected, missing, and protected-residency sets plus root, fallback, missing-child, uncovered, and transition metrics. Renderer metrics now independently report selected, frustum-visible, and drawn counts; transitions are cumulative.
+- WorldEngine now indexes persisted section keys once at startup. Missing hierarchy children are lazily restored with an eight-section/frame budget instead of loading all persisted sections into memory.
+- Coarse hierarchy nodes build before fine nodes. GPU eviction preserves the current coverage cut and in-flight sibling set, and evicted nodes are no longer immediately rediscovered and rebuilt.
+
+L1 validation
+- .\gradlew.bat test build --offline --console=plain: PASS. 23 tests, zero failures/errors. Eight LodCoverageSelector tests cover complete replacement, missing-child fallback, sparse masks, empty children, signed coordinates, hysteresis, vanilla-boundary filtering, and boundary fallback.
+- Multiple quick-play runClient passes entered the existing world with rendering temporarily enabled; each spawned client was explicitly terminated and the ignored config plus temporary quick-play argument were restored.
+- Runtime proved lazy restoration and mixed selected/drawn LODs. One active pass reached drawnLod=[4, 0, 3, 0, 0] with uncovered=0 while the hierarchy was still filling.
+- The first eviction implementation exposed a reproducible upload/eviction loop at 256 MiB. Follow-up boundary filtering removed it: the final settled pass held queued=0, missingChildren=0, fallback=0, uncovered=0, evicted=0, gpuMiB about 196, with stable uploads/cache across repeated 10-second samples.
+- No GL_INVALID_OPERATION or Voxy exception was found in the successful L1 logs. One separate retry crashed before Minecraft construction in Forge early-display FMLConfig boolean lookup; the next launch succeeded without code/config changes, so it remains a transient dev-launch issue.
+
+L1 movement sign-off / next action
+- Added camera X/Z to the periodic renderer metrics. A controlled validation temporarily used a two-chunk vanilla radius, focused the spawned Minecraft window, respawned, and held sprint+forward for exactly 20 seconds before releasing the keys and terminating only that client.
+- Camera moved from (-5.5, 0.5) to (-9.7, -30.7). Coverage transitions increased from 1 to 45; the final frame had selected=33, visible=4, drawn=4, drawnLod=[2, 2, 0, 0, 0], missingChildren=0, fallback=0, and uncovered=0. A second 20-second run reproduced nonzero transitions and LOD1 drawing.
+- The reduced-radius movement exercised the vanilla/LOD selection rings and proved simultaneous LOD0/LOD1 drawing without coverage loss. L1 is signed off at CPU-contract and active non-shader runtime level. Rendering remains default-off because L2 material fidelity is still incomplete.
+- Next action is L2 packed material work: biome tint LUT, emission minimum, adjacent/self-light selection, six-neighbor samples, partial face tint, and explicit render-layer flags.
+
+Voxy Forge 1.20.1 follow-up handoff
+Updated: 2026-07-12 09:00 Asia/Taipei
+
+Follow-up implementation (this agent)
+- Added rate-limited (10 second) renderer metrics: loaded WorldSections, rebuild queue, cumulative uploads, cache size, visible/drawn sections, GPU bytes, evictions, and cached/drawn counts per LOD. Metrics are also exposed as an immutable RenderMetrics snapshot.
+- Replaced the permissive render-type string filter with explicit solid/cutout, translucent, tripwire, and unsupported classification. Only solid/default/cutout-like geometry enters the current pass; one focused test covers all classifications.
+- Mesh instances now retain their packed voxel. The prototype vertex stream changed from POSITION_COLOR_TEX to POSITION_COLOR_TEX_LIGHTMAP and submits the stored block/sky nibbles through LightTexture.pack. Directional shade matches the upstream factors (up 1.0, down 0.5, Z 0.8, X 0.6).
+- This is a real lighting-path improvement, but not complete material fidelity: emissive minimum light, adjacent/self-light selection, per-biome tint LUT, partial face tint, transparency, and SSAO remain unimplemented.
+
+Follow-up validation
+- .\gradlew.bat clean compileJava test build --console=plain: PASS. 15 tests, zero failures/errors.
+- Fresh quick-play run entered the existing integrated world with Voxy, Embeddium 0.3.31 and Oculus 1.8.0. Rendering was temporarily enabled only in ignored run config and restored to false afterward; the temporary Gradle quick-play argument was removed.
+- Runtime settled from loaded=395/queued=355 to loaded=2103/queued=0, uploads=997, cached=983, visible=19, drawn=19, gpuMiB=207.91, evicted=0. Cached LOD distribution was [878, 67, 26, 7, 5].
+- The camera remained near the existing spawn, so drawn LOD distribution stayed [19, 0, 0, 0, 0]. This run does NOT prove LOD boundary movement or parent/children coverage.
+- run/logs/latest.log contains no GL_INVALID_OPERATION, Voxy ERROR/FATAL, exception, or crash. The sole ERROR is the known Oculus-induced Embeddium MixinTaintDetector warning. No runClient/forgeclientuserdev process remains.
+
+Embeddium API audit
+- The exact 0.3.31 JAR provides RenderDevice.INSTANCE, CommandList, GlMutableBuffer, GlTessellation and indexed MultiDrawBatch. These are direct internal APIs, not a stable public surface.
+- A correct replacement needs managed RenderDevice context, vertex+index buffers, tessellation attribute bindings, indexed draws, and explicit deletion. Simply wrapping current POSITION_COLOR_TEX_LIGHTMAP bytes would not make them compatible with Embeddium terrain/Oculus programs.
+- Embeddium terrain shaders expect its ChunkMeshFormats and material/light contract. Do not replace vanilla VertexBuffer until a matching indexed vertex contract and shader attribute layout are implemented and visually tested.
+
+Reference audit / next unique priority
+- Upstream material correctness is ModelTextureBakery + ModelFactory metadata + RenderDataFactory: biome tint LUT, partial/full face tint, separate sky/block light, emission minimum, adjacent/self-light selection, six-neighbor boundary samples, and explicit render-layer flags.
+- Upstream does not implement vanilla four-corner AO; it uses directional shade and optional SSAO/occupancy. Do not report AO as complete merely because shade factors exist.
+- Current distance-only per-section LOD selection cannot guarantee coverage. Upstream hierarchy enforces parent OR children, with parent fallback while children are incomplete. The next unique priority is a tested CPU coverage selector that enforces this invariant and logs boundary transitions, followed by an actual camera-movement run across the vanilla radius and at least one LOD threshold.
+- After coverage is proven, implement the packed material contract (biome tint LUT, emission/neighbor light, render-layer metadata), then adopt Embeddium indexed device buffers with a matching vertex format. Oculus terrain/shadow work remains blocked on that contract.
+
+Voxy Forge 1.20.1 overnight handoff
+Updated: 2026-07-12 08:12 Asia/Taipei
+
+Cutoff audit
+- The automation resumed after the hard deadline (local time was already 08:10), so no new implementation layer or fresh client run was started.
+- Final consistency checks found no forgeclientuserdev/runClient process; PID 22480 is the Gradle 8.14.5 daemon only.
+- The existing artifact still contains both Voxy mixin classes, voxy.mixins.json, the nonempty voxy.refmap.json, and GpuSectionRenderer. All 14 saved JUnit results report zero failures/errors.
+- build/gpu-render-world-fixed.png remains present. The previously referenced build/final-title-screen.png is not present in the current build tree, so the title-screen result below is a prior visual observation plus log evidence, not a currently inspectable screenshot artifact.
+
+Overall status
+- The requested port is not complete. Rendering remains disabled by default. A bounded non-shader GPU section renderer now exists and has survived a focused in-world draw test, but it is still a prototype: lighting/tint, LOD transition correctness, translucent geometry, production Embeddium buffer ownership, and Oculus shader-pack drawing are incomplete.
+- L1 was visually verified during the run, not only log-inferred, but the referenced title-screen screenshot is no longer present in the current build tree. The surviving gameplay screenshot is D:\document\dev\GitHub\voxy-1.20.1\build\gpu-render-world-fixed.png.
+- L2 now has a functional client world data path: real ClientLevel chunks and live block-section changes are voxelized, mipmapped, inserted into 32^3 world sections, persisted per world, restored on later sessions, and closed through client lifecycle teardown.
+
+Fully integrated
+- Mixin build/runtime pipeline:
+  - Legacy ModDevGradle native mixin DSL enabled in build.gradle.
+  - org.spongepowered:mixin:0.8.5:processor annotation processor enabled.
+  - voxy.mixins.json registered for dev runs and packaged through MixinConfigs manifest metadata.
+  - Generated build/mixin/voxy.refmap.json is nonempty and maps both validated targets.
+  - Reobfuscated JAR contains the mixin classes, config, and refmap; reobfJar/build pass.
+  - Dev output exposes build/mixin so runClient logs "Remapping refMap voxy.refmap.json" instead of the prior missing-refmap warning.
+  - Validated targets: Minecraft.clearLevel()V -> m_91399_()V; ClientLevel.setBlocksDirty(BlockPos,BlockState,BlockState)V -> m_6550_(...)V.
+- Mapping registry and storage contract:
+  - Dense block IDs with implicit/unpersisted air ID 0; dense biome IDs from 0.
+  - Top-two-bit persisted type keys, compressed NBT block state/biome records, strict encoded-ID/type/order validation, callbacks, reverse block lookup, opacity, force-resave, and capacity checks.
+  - Storage snapshots ByteBuffer remaining bytes and returns independent arrays.
+- World storage and lifecycle:
+  - 32x32x32 WorldSection data/layout, child mask, level-0 nonair count, ref/live state, dirty/save flags.
+  - Reference-shaped key+metadata+16-bit LUT serializer and 0/1/-1 load status contract.
+  - In-memory and durable file SectionStorage implementations; file writes use atomic replacement when supported.
+  - Integrated-world storage is save-specific under saves/<world>/voxy/<dimension>; multiplayer storage is separated by server identity/dimension.
+  - WorldEngine restores/new-initializes sections, tracks dirty sections, saves on shutdown, flushes mappings, and rejects close with acquired sections.
+- Actual Minecraft data flow:
+  - Forge client LevelEvent/ChunkEvent lifecycle starts the engine and snapshots real LevelChunkSection block/biome palettes and block/sky light arrays.
+  - Single-thread ingest worker converts with public 1.20.1 PalettedContainer APIs, builds five in-section mip levels, and inserts them through WorldUpdater into world LOD levels 0-4.
+  - ClientLevelMixin re-ingests the affected section after live setBlocksDirty updates.
+  - MinecraftMixin clearLevel hook and Forge level unload close ingest, persist sections/mappings, and release storage.
+- Runtime evidence from the durable reload pass (captured during this run):
+  - 14,616 submitted, 14,616 completed, 0 failed.
+  - 2,021 restored, 0 new, 0 corrupt on a later session.
+  - 2,388 sections and 342 mappings were written in the first durable session (about 156.8 MB section data before later rewrites).
+- Model/resource integration:
+  - Forge RegisterClientReloadListenersEvent registers VoxyModelCatalog.
+  - Catalog resolves every mapped BlockState through Forge BakedModel render types and five-argument getQuads with ModelData.EMPTY.
+  - Quad vertex arrays, tint, cull face, sprite ID, render type, shading, and AO are copied into immutable CPU snapshots.
+  - New mapping callbacks are marshalled to the Minecraft thread; reload invalidates and rebuilds the catalog.
+  - Runtime model generation reached 350 mapped block models.
+
+Integrated foundation/prototype, not a completed renderer
+- LodSectionMeshBuilder expands world voxels through baked model quads, applies level scaling/world origins, preserves unculled geometry, and removes internal faces. Focused adjacent-voxel test passes.
+- EmbeddiumRenderBridge directly uses Embeddium 0.3.31 SodiumWorldRenderer APIs at Forge AFTER_SOLID_BLOCKS and captures visible count, terrain completeness, camera-section readiness, camera position, and partial tick.
+- OculusShaderBridge directly uses Oculus 1.8.0 IrisApi, PipelineManager, WorldRenderingPipeline, WorldRenderingPhase, and SodiumTerrainPipeline state.
+- Runtime bridge evidence: Embeddium bridge activated; Oculus bridge reported shaders=false, phase=NONE, terrainPipeline=false, shadowProgram=false, matching the no-shaderpack run.
+- GpuSectionRenderer owns bounded vanilla VertexBuffers (256 MiB / 2,048 sections), queues dirty and newly restored sections, prioritizes the camera's desired LOD, acquires same-LOD boundary neighbors for mesh culling, uploads on the render thread, selects outside the vanilla render distance, uses Embeddium frustum visibility directly, and evicts least-recently-visible/farthest buffers.
+- GPU vertices are section-local and translated camera-relative at draw time to avoid large-world float precision loss. Solid/cutout-like quads are submitted with the block atlas and matching POSITION_COLOR_TEX shader; translucent/tripwire geometry is excluded.
+- Focused active-render run found 32,694 GL_INVALID_OPERATION messages. 1.20.1 bytecode inspection showed VertexBuffer.drawWithShader does not bind its VAO; explicitly binding before draw removed the error in the repeat run. Screenshot: D:\document\dev\GitHub\voxy-1.20.1\build\gpu-render-world-fixed.png.
+- The renderer remains default-off because one stable gameplay frame/run does not validate LOD seams, material fidelity, lighting/tint, broader camera movement, or shader packs.
+
+Not started / incomplete
+- Production Embeddium-native buffer allocator/draw ownership, texture/color/depth baking, light/tint/AO application, translucent sorting, robust LOD transition coverage, performance instrumentation, and broader visual validation.
+- Oculus shader source patching/program compilation, framebuffer/blend/sampler/image binding, shadow rendering, and shaderpack compatibility testing.
+- Active-section eviction/cache parity with upstream Voxy; current engine holds loaded sections until world close and saves dirty data at teardown.
+- Periodic/background section saving; durable data is synchronously committed at teardown (mapping records are committed as registered).
+- Cross-section neighbor face culling for generated LOD meshes.
+- World/DH importers and remaining mod compatibility. Distant Horizons 3.2.0b is only a 1.20.1 rendering-design reference; it is not a port source or dependency.
+
+Validation
+- Clean gate: .\gradlew.bat clean compileJava test build --console=plain -> PASS at 03:19; all tasks executed.
+- Latest incremental gate: .\gradlew.bat test build --console=plain -> PASS after mesh unit.
+- 07:18 incremental gate after GPU discovery, camera-relative coordinates, shader-format correction, and VAO bind: .\gradlew.bat compileJava test build --console=plain -> PASS; 14 tests are green.
+- Tests: 14 tests, 0 failures, 0 errors across 8 test classes.
+- Artifact: D:\document\dev\GitHub\voxy-1.20.1\build\libs\voxy-0.1.0.jar.
+- Final fresh runClient: BUILD SUCCESSFUL; visually reached Forge title screen, held over 20 seconds, then only the spawned client was closed normally.
+- Mixin evidence: D:\document\dev\GitHub\voxy-1.20.1\run\logs\debug.log contains config registration and application of MinecraftMixin and ClientLevelMixin.
+- Current latest log: D:\document\dev\GitHub\voxy-1.20.1\run\logs\latest.log.
+- No new crash report was created. The newest existing crash report remains crash-2026-07-11_22.53.14-fml.txt, predating this run.
+- Expected nonfatal noise remains the Oculus-induced Embeddium MixinTaintDetector ERROR/WARN set plus optional compatibility class-not-found warnings from Oculus.
+- 06:42 fresh default/title run: Voxy refmap remapped, both Voxy mixins applied, Voxy/Embeddium/Oculus loaded, resource reload completed, held over 20 seconds, no new crash.
+- 07:20 focused quick-play run with the ignored config temporarily enabled: existing world loaded, 352 model entries baked, direct Embeddium/Oculus bridges activated, player respawned, gameplay frame captured, held over 20 seconds after the VAO fix, and latest.log contains zero GL_INVALID_OPERATION entries. Only the spawned runClient tree was terminated; ignored run/config/voxy-client.toml was restored to false and the temporary Gradle quick-play argument was removed.
+
+First blocker / exact next priority
+- First blocker to enabling visible Voxy output by default: the prototype uses vanilla VertexBuffer state inside Embeddium's terrain stage and has only a narrow no-shader visual test; it lacks light/tint/AO material fidelity and validated LOD transition coverage.
+- Next priority: add explicit upload/draw/cache metrics and debug visualization, validate actual Voxy section counts and LOD boundaries while moving the camera beyond vanilla distance, then replace vanilla buffer ownership with Embeddium's direct GL device/buffer APIs. Keep renderingEnabled false. After non-shader material/transition correctness is established, implement the Oculus terrain/shadow program path.
+- After non-shader rendering is visually validated, bind the same vertex/material contract to Oculus terrain and shadow programs, then proceed to importers.
+
+Failed approaches / cautions
+- Do not apply the standalone MixinGradle plugin. Legacy ModDevGradle already owns the mixin DSL; the standalone plugin line was tested briefly and removed before successful compilation.
+- An empty mixin config creates no refmap/mapping outputs and previously broke reobfJar. Keep at least one bytecode-validated real mixin; do not hand-create empty generated files.
+- LegacyForge 2.0.91 does not expose the newer unitTest DSL. Plain JUnit Minecraft bootstrap also enters untransformed Forge NetworkHooks and fails; mapped test classpaths are enabled, but Minecraft-backed integration is validated with runClient.
+- voxy-mc_1201 is a primary behavioral port source, but do not copy its Fabric/Lithium palette internals or Sodium/Iris mixins verbatim. Translate those platform-specific integrations to public Forge/Minecraft APIs and the target mandatory-mod APIs.
+- File section records use the upstream uncompressed 16-bit LUT payload, so a few thousand sections consume substantial disk space. Add an outer compression layer or production database backend before broad imports.
+- Gradle `runClient --args="--quickPlaySingleplayer ..."` replaces ModDev's dev-launch main class and fails before Minecraft starts. For the focused test, a temporary client programArgument was used and then removed.
+- Vanilla 1.20.1 VertexBuffer.drawWithShader does not bind the VAO. Any retained vanilla-buffer path must call bind() immediately before drawing; omitting it generated 32,694 GL_INVALID_OPERATION messages in run/logs/latest.log during the failed 06:52 run.
+
+Files added/changed by this run
+- build.gradle
+- src/main/resources/voxy.mixins.json
+- src/main/java/com/y271727uy/voxy/Voxy.java
+- src/main/java/com/y271727uy/voxy/mixin/MinecraftMixin.java
+- src/main/java/com/y271727uy/voxy/mixin/ClientLevelMixin.java
+- src/main/java/com/y271727uy/voxy/client/VoxyClientLifecycle.java
+- src/main/java/com/y271727uy/voxy/client/model/BakedBlockModel.java
+- src/main/java/com/y271727uy/voxy/client/model/VoxyModelCatalog.java
+- src/main/java/com/y271727uy/voxy/client/render/EmbeddiumRenderBridge.java
+- src/main/java/com/y271727uy/voxy/client/render/OculusShaderBridge.java
+- src/main/java/com/y271727uy/voxy/client/render/mesh/LodSectionMesh.java
+- src/main/java/com/y271727uy/voxy/client/render/mesh/LodSectionMeshBuilder.java
+- src/main/java/com/y271727uy/voxy/client/render/mesh/GpuSectionRenderer.java
+- src/main/java/com/y271727uy/voxy/common/storage/MappingStorage.java
+- src/main/java/com/y271727uy/voxy/common/storage/InMemoryMappingStorage.java
+- src/main/java/com/y271727uy/voxy/common/storage/SectionStorage.java
+- src/main/java/com/y271727uy/voxy/common/storage/WorldSectionCodec.java
+- src/main/java/com/y271727uy/voxy/common/storage/InMemorySectionStorage.java
+- src/main/java/com/y271727uy/voxy/common/storage/FileSectionStorage.java
+- src/main/java/com/y271727uy/voxy/common/world/MappingRegistry.java
+- src/main/java/com/y271727uy/voxy/common/world/WorldSection.java
+- src/main/java/com/y271727uy/voxy/common/world/WorldEngine.java
+- src/main/java/com/y271727uy/voxy/common/world/WorldUpdater.java
+- src/main/java/com/y271727uy/voxy/common/world/service/VoxelIngestService.java
+- src/test/java/com/y271727uy/voxy/common/storage/InMemoryMappingStorageTest.java
+- src/test/java/com/y271727uy/voxy/common/storage/SectionStorageTest.java
+- src/test/java/com/y271727uy/voxy/common/storage/FileSectionStorageTest.java
+- src/test/java/com/y271727uy/voxy/common/world/MappingRegistryTest.java
+- src/test/java/com/y271727uy/voxy/common/world/WorldSectionTest.java
+- src/test/java/com/y271727uy/voxy/client/render/mesh/LodSectionMeshBuilderTest.java
+- nightly-handoff.txt
+
+Uncommitted inventory
+- Existing staged local JAR additions, original example-class rename/delete state, user .vscode directory, runclient.log, logs directory, and reference-project directory remain untouched/preserved.
+- Use `git status --short` for the authoritative inventory; no reset/revert/commit was performed.

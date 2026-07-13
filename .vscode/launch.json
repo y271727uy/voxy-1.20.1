@@ -1,0 +1,101 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "Client",
+      "presentation": {
+        "group": "Mod Development - voxy-1.20.1",
+        "order": 0
+      },
+      "projectName": "voxy-1.20.1",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\clientRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\clientRunVmArgs.txt",
+        "-Dfml.modFolders\u003dvoxy%%D:\\document\\dev\\GitHub\\voxy-1.20.1\\bin\\main"
+      ],
+      "cwd": "${workspaceFolder}\\run",
+      "env": {
+        "MOD_CLASSES": "voxy%%D:\\document\\dev\\GitHub\\voxy-1.20.1\\bin\\main"
+      },
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    },
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "Data",
+      "presentation": {
+        "group": "Mod Development - voxy-1.20.1",
+        "order": 1
+      },
+      "projectName": "voxy-1.20.1",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\dataRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\dataRunVmArgs.txt",
+        "-Dfml.modFolders\u003dvoxy%%D:\\document\\dev\\GitHub\\voxy-1.20.1\\bin\\main"
+      ],
+      "cwd": "${workspaceFolder}\\run",
+      "env": {
+        "MOD_CLASSES": "voxy%%D:\\document\\dev\\GitHub\\voxy-1.20.1\\bin\\main"
+      },
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    },
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "GameTestServer",
+      "presentation": {
+        "group": "Mod Development - voxy-1.20.1",
+        "order": 2
+      },
+      "projectName": "voxy-1.20.1",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\gameTestServerRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\gameTestServerRunVmArgs.txt",
+        "-Dfml.modFolders\u003dvoxy%%D:\\document\\dev\\GitHub\\voxy-1.20.1\\bin\\main"
+      ],
+      "cwd": "${workspaceFolder}\\run",
+      "env": {
+        "MOD_CLASSES": "voxy%%D:\\document\\dev\\GitHub\\voxy-1.20.1\\bin\\main"
+      },
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    },
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "Server",
+      "presentation": {
+        "group": "Mod Development - voxy-1.20.1",
+        "order": 3
+      },
+      "projectName": "voxy-1.20.1",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\serverRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\serverRunVmArgs.txt",
+        "-Dfml.modFolders\u003dvoxy%%D:\\document\\dev\\GitHub\\voxy-1.20.1\\bin\\main"
+      ],
+      "cwd": "${workspaceFolder}\\run",
+      "env": {
+        "MOD_CLASSES": "voxy%%D:\\document\\dev\\GitHub\\voxy-1.20.1\\bin\\main"
+      },
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    }
+  ]
+}

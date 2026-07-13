@@ -1,0 +1,484 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.5/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+Reusing configuration cache.
+> Task :writeClientLegacyClasspath UP-TO-DATE
+> Task :downloadAssets UP-TO-DATE
+> Task :generateModMetadata UP-TO-DATE
+> Task :createMinecraftArtifacts UP-TO-DATE
+> Task :prepareClientRun UP-TO-DATE
+> Task :processResources UP-TO-DATE
+
+> Task :compileJava
+D:\document\dev\GitHub\voxy-1.20.1\src\main\java\com\y271727uy\voxy\Voxy.java:19: 警告: [removal] ModLoadingContext 中的 get() 已过时, 且标记为待删除
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, VoxyClientConfig.SPEC);
+                         ^
+1 个警告
+
+> Task :classes
+
+> Task :runClient
+2026-07-11 22:54:09,273 main WARN Advanced terminal features are not available in this environment
+[22:54:09] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgeclientuserdev, --version, MOD_DEV, --assetIndex, 5, --assetsDir, C:\\Users\\HP\\.gradle\\caches\\neoformruntime\\assets, --gameDir, ., --fml.forgeVersion, 47.4.0, --fml.mcVersion, 1.20.1, --fml.forgeGroup, net.minecraftforge, --fml.mcpVersion, 20230612.114412]
+[22:54:09] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: ModLauncher 10.0.10+10.0.10+main.22f00f84 starting: java version 17.0.11 by Oracle Corporation; OS Windows 11 arch amd64 version 10.0
+[22:54:09] [main/DEBUG] [cp.mo.mo.LaunchServiceHandler/MODLAUNCHER]: Found launch services [fmlclientdev,forgeclient,minecraft,forgegametestserverdev,fmlserveruserdev,fmlclient,fmldatauserdev,forgeserverdev,forgeserveruserdev,forgeclientdev,forgeclientuserdev,forgeserver,forgedatadev,fmlserver,fmlclientuserdev,fmlserverdev,forgedatauserdev,testharness,forgegametestserveruserdev]
+[22:54:09] [main/DEBUG] [cp.mo.mo.NameMappingServiceHandler/MODLAUNCHER]: Found naming services : [srgtomcp]
+[22:54:09] [main/DEBUG] [cp.mo.mo.LaunchPluginHandler/MODLAUNCHER]: Found launch plugins: [mixin,eventbus,slf4jfixer,object_holder_definalize,runtime_enum_extender,capability_token_subclass,accesstransformer,runtimedistcleaner]
+[22:54:09] [main/DEBUG] [cp.mo.mo.TransformationServicesHandler/MODLAUNCHER]: Discovering transformation services
+[22:54:09] [main/DEBUG] [ne.mi.fm.lo.FMLPaths/CORE]: Path GAMEDIR is D:\document\dev\GitHub\voxy-1.20.1\run
+[22:54:09] [main/DEBUG] [ne.mi.fm.lo.FMLPaths/CORE]: Path MODSDIR is D:\document\dev\GitHub\voxy-1.20.1\run\mods
+[22:54:09] [main/DEBUG] [ne.mi.fm.lo.FMLPaths/CORE]: Path CONFIGDIR is D:\document\dev\GitHub\voxy-1.20.1\run\config
+[22:54:09] [main/DEBUG] [ne.mi.fm.lo.FMLPaths/CORE]: Path FMLCONFIG is D:\document\dev\GitHub\voxy-1.20.1\run\config\fml.toml
+[22:54:09] [main/DEBUG] [cp.mo.mo.TransformationServicesHandler/MODLAUNCHER]: Found additional transformation services from discovery services: 
+[22:54:09] [main/INFO] [ne.mi.fm.lo.ImmediateWindowHandler/]: Loading ImmediateWindowProvider fmlearlywindow
+[22:54:10] [main/INFO] [EARLYDISPLAY/]: Trying GL version 4.6
+[22:54:10] [main/INFO] [EARLYDISPLAY/]: Requested GL version 4.6 got version 4.6
+[22:54:10] [main/DEBUG] [cp.mo.mo.TransformationServicesHandler/MODLAUNCHER]: Found transformer services : [mixin,fml]
+[22:54:10] [main/DEBUG] [cp.mo.mo.TransformationServicesHandler/MODLAUNCHER]: Transformation services loading
+[22:54:10] [main/DEBUG] [cp.mo.mo.TransformationServiceDecorator/MODLAUNCHER]: Loading service mixin
+[22:54:10] [main/DEBUG] [cp.mo.mo.TransformationServiceDecorator/MODLAUNCHER]: Loaded service mixin
+[22:54:10] [main/DEBUG] [cp.mo.mo.TransformationServiceDecorator/MODLAUNCHER]: Loading service fml
+[22:54:10] [main/DEBUG] [ne.mi.fm.lo.LauncherVersion/CORE]: Found FMLLauncher version 1.0
+[22:54:10] [main/DEBUG] [ne.mi.fm.lo.FMLLoader/CORE]: FML 1.0 loading
+[22:54:10] [main/DEBUG] [ne.mi.fm.lo.FMLLoader/CORE]: FML found ModLauncher version : 10.0.10+10.0.10+main.22f00f84
+[22:54:10] [main/DEBUG] [ne.mi.fm.lo.FMLLoader/CORE]: Requesting CoreMods to not apply the fix for ASMAPI.findFirstInstructionBefore by default
+[22:54:10] [main/DEBUG] [ne.mi.fm.lo.FMLLoader/CORE]: FML found AccessTransformer version : 8.0.4+66+master.c09db6d7
+[22:54:10] [main/DEBUG] [ne.mi.fm.lo.FMLLoader/CORE]: FML found EventBus version : 6.0.5+6.0.5+master.eb8e549b
+[22:54:10] [main/DEBUG] [ne.mi.fm.lo.FMLLoader/CORE]: Found Runtime Dist Cleaner
+[22:54:10] [main/DEBUG] [ne.mi.co.CoreModEngine/]: CoreMods will preserve legacy behavior of ASMAPI.findFirstInstructionBefore for backwards-compatibility
+[22:54:10] [main/DEBUG] [ne.mi.fm.lo.FMLLoader/CORE]: FML found CoreMod version : 5.2.4
+[22:54:10] [main/DEBUG] [ne.mi.fm.lo.FMLLoader/CORE]: Found ForgeSPI package implementation version 7.0.1+7.0.1+master.d2b38bf6
+[22:54:10] [main/DEBUG] [ne.mi.fm.lo.FMLLoader/CORE]: Found ForgeSPI package specification 5
+[22:54:10] [main/DEBUG] [cp.mo.mo.TransformationServiceDecorator/MODLAUNCHER]: Loaded service fml
+[22:54:10] [main/DEBUG] [cp.mo.mo.TransformationServicesHandler/MODLAUNCHER]: Configuring option handling for services
+[22:54:10] [main/DEBUG] [cp.mo.mo.TransformationServicesHandler/MODLAUNCHER]: Transformation services initializing
+[22:54:10] [main/DEBUG] [cp.mo.mo.TransformationServiceDecorator/MODLAUNCHER]: Initializing transformation service mixin
+[22:54:10] [main/DEBUG] [mixin/]: MixinService [ModLauncher] was successfully booted in cpw.mods.cl.ModuleClassLoader@5bd03f44
+[22:54:10] [pool-2-thread-1/INFO] [EARLYDISPLAY/]: GL info: Intel(R) Iris(R) Xe Graphics GL version 4.6.0 - Build 32.0.101.7076, Intel
+[22:54:10] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.5 Source=union:/C:/Users/HP/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.5/9d1c0c3a304ae6697ecd477218fa61b850bf57fc/mixin-0.8.5.jar%23186!/ Service=ModLauncher Env=CLIENT
+[22:54:11] [main/DEBUG] [mixin/]: Initialising Mixin Platform Manager
+[22:54:11] [main/DEBUG] [mixin/]: Adding mixin platform agents for container ModLauncher Root Container(ModLauncher:4f56a0a2)
+[22:54:11] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentMinecraftForge for ModLauncher Root Container(ModLauncher:4f56a0a2)
+[22:54:11] [main/DEBUG] [mixin/]: MixinPlatformAgentMinecraftForge rejected container ModLauncher Root Container(ModLauncher:4f56a0a2)
+[22:54:11] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for ModLauncher Root Container(ModLauncher:4f56a0a2)
+[22:54:11] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container ModLauncher Root Container(ModLauncher:4f56a0a2)
+[22:54:11] [main/DEBUG] [cp.mo.mo.TransformationServiceDecorator/MODLAUNCHER]: Initialized transformation service mixin
+[22:54:11] [main/DEBUG] [cp.mo.mo.TransformationServiceDecorator/MODLAUNCHER]: Initializing transformation service fml
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.FMLServiceProvider/CORE]: Setting up basic FML game directories
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.FMLPaths/CORE]: Path GAMEDIR is D:\document\dev\GitHub\voxy-1.20.1\run
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.FMLPaths/CORE]: Path MODSDIR is D:\document\dev\GitHub\voxy-1.20.1\run\mods
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.FMLPaths/CORE]: Path CONFIGDIR is D:\document\dev\GitHub\voxy-1.20.1\run\config
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.FMLPaths/CORE]: Path FMLCONFIG is D:\document\dev\GitHub\voxy-1.20.1\run\config\fml.toml
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.FMLServiceProvider/CORE]: Loading configuration
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.FMLServiceProvider/CORE]: Preparing ModFile
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.FMLServiceProvider/CORE]: Preparing launch handler
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.FMLLoader/CORE]: Using forgeclientuserdev as launch service
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.FMLLoader/CORE]: Received command line version data  : VersionInfo[forgeVersion=47.4.0, mcVersion=1.20.1, mcpVersion=20230612.114412, forgeGroup=net.minecraftforge]
+[22:54:11] [main/DEBUG] [cp.mo.mo.TransformationServiceDecorator/MODLAUNCHER]: Initialized transformation service fml
+[22:54:11] [main/DEBUG] [cp.mo.mo.NameMappingServiceHandler/MODLAUNCHER]: Current naming domain is 'mcp'
+[22:54:11] [main/DEBUG] [cp.mo.mo.NameMappingServiceHandler/MODLAUNCHER]: Identified name mapping providers {srg=srgtomcp:1234}
+[22:54:11] [main/DEBUG] [cp.mo.mo.TransformationServicesHandler/MODLAUNCHER]: Transformation services begin scanning
+[22:54:11] [main/DEBUG] [cp.mo.mo.TransformationServiceDecorator/MODLAUNCHER]: Beginning scan trigger - transformation service mixin
+[22:54:11] [main/DEBUG] [cp.mo.mo.TransformationServiceDecorator/MODLAUNCHER]: End scan trigger - transformation service mixin
+[22:54:11] [main/DEBUG] [cp.mo.mo.TransformationServiceDecorator/MODLAUNCHER]: Beginning scan trigger - transformation service fml
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.FMLServiceProvider/CORE]: Initiating mod scan
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModListHandler/CORE]: Found mod coordinates from lists: []
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModDiscoverer/CORE]: Found Mod Locators : (mods folder:null),(maven libs:null),(exploded directory:null),(minecraft:null),(userdev classpath:null)
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModDiscoverer/CORE]: Found Dependency Locators : (JarInJar:null)
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.ta.CommonLaunchHandler/CORE]: Got mod coordinates voxy%%D:\document\dev\GitHub\voxy-1.20.1\build\classes\java\main;voxy%%D:\document\dev\GitHub\voxy-1.20.1\build\resources\main from env
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.ta.CommonLaunchHandler/CORE]: Found supplied mod coordinates [{voxy=[D:\document\dev\GitHub\voxy-1.20.1\build\classes\java\main, D:\document\dev\GitHub\voxy-1.20.1\build\resources\main]}]
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file forge-1.20.1-47.4.0.jar with {minecraft} mods - versions {1.20.1}
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate C:\Users\HP\.gradle\caches\modules-2\files-2.1\net.minecraftforge\fmlcore\1.20.1-47.4.0\235975dafa4309945b59c56b53f31dc5b65a6051\fmlcore-1.20.1-47.4.0.jar
+[22:54:11] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file C:\Users\HP\.gradle\caches\modules-2\files-2.1\net.minecraftforge\fmlcore\1.20.1-47.4.0\235975dafa4309945b59c56b53f31dc5b65a6051\fmlcore-1.20.1-47.4.0.jar is missing mods.toml file
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate C:\Users\HP\.gradle\caches\modules-2\files-2.1\net.minecraftforge\javafmllanguage\1.20.1-47.4.0\f0c0b352173d0a378cbdcec9cfc4ba65899a721\javafmllanguage-1.20.1-47.4.0.jar
+[22:54:11] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file C:\Users\HP\.gradle\caches\modules-2\files-2.1\net.minecraftforge\javafmllanguage\1.20.1-47.4.0\f0c0b352173d0a378cbdcec9cfc4ba65899a721\javafmllanguage-1.20.1-47.4.0.jar is missing mods.toml file
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate C:\Users\HP\.gradle\caches\modules-2\files-2.1\net.minecraftforge\lowcodelanguage\1.20.1-47.4.0\e862740d8c84d08dbfedea412bef88fe42e727c5\lowcodelanguage-1.20.1-47.4.0.jar
+[22:54:11] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file C:\Users\HP\.gradle\caches\modules-2\files-2.1\net.minecraftforge\lowcodelanguage\1.20.1-47.4.0\e862740d8c84d08dbfedea412bef88fe42e727c5\lowcodelanguage-1.20.1-47.4.0.jar is missing mods.toml file
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate C:\Users\HP\.gradle\caches\modules-2\files-2.1\net.minecraftforge\mclanguage\1.20.1-47.4.0\5719b3a297a33f877ed5dde4cb4bd75c859096af\mclanguage-1.20.1-47.4.0.jar
+[22:54:11] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file C:\Users\HP\.gradle\caches\modules-2\files-2.1\net.minecraftforge\mclanguage\1.20.1-47.4.0\5719b3a297a33f877ed5dde4cb4bd75c859096af\mclanguage-1.20.1-47.4.0.jar is missing mods.toml file
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate D:\document\dev\GitHub\voxy-1.20.1\build\classes\java\main
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file main with {voxy} mods - versions {0.1.0}
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate /
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file  with {forge} mods - versions {47.4.0}
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate C:\Users\HP\.gradle\caches\8.14.5\transforms\bf2866034a860c94be0e52732d3b33bb\transformed\embeddium-0.3.31+mc1.20.1.jar
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file embeddium-0.3.31+mc1.20.1.jar with {embeddium,rubidium} mods - versions {0.3.31+mc1.20.1,0.7.1}
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate C:\Users\HP\.gradle\caches\8.14.5\transforms\e66bb8c2c78dabf873f9f4b6614f2333\transformed\oculus-mc1.20.1-1.8.0.jar
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file oculus-mc1.20.1-1.8.0.jar with {oculus} mods - versions {1.8.0}
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate C:\Users\HP\.gradle\caches\8.14.5\transforms\bf2866034a860c94be0e52732d3b33bb\transformed\embeddium-0.3.31+mc1.20.1.jar
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file embeddium-0.3.31+mc1.20.1.jar with {embeddium,rubidium} mods - versions {0.3.31+mc1.20.1,0.7.1}
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate C:\Users\HP\.gradle\caches\8.14.5\transforms\e66bb8c2c78dabf873f9f4b6614f2333\transformed\oculus-mc1.20.1-1.8.0.jar
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file oculus-mc1.20.1-1.8.0.jar with {oculus} mods - versions {1.8.0}
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.UniqueModListBuilder/]: Found 2 mods for first modid oculus, selecting most recent based on version data
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.UniqueModListBuilder/]: Selected file oculus-mc1.20.1-1.8.0.jar for modid oculus with version 1.8.0
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.UniqueModListBuilder/]: Found 2 mods for first modid embeddium, selecting most recent based on version data
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.UniqueModListBuilder/]: Selected file embeddium-0.3.31+mc1.20.1.jar for modid embeddium with version 0.3.31+mc1.20.1
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.AbstractJarFileDependencyLocator/]: Failed to load resource META-INF\jarjar\metadata.json from forge-1.20.1-47.4.0.jar, it does not contain dependency information.
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.AbstractJarFileDependencyLocator/]: Failed to load resource META-INF\jarjar\metadata.json from , it does not contain dependency information.
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.AbstractJarFileDependencyLocator/]: Failed to load resource META-INF\jarjar\metadata.json from main, it does not contain dependency information.
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.AbstractJarFileDependencyLocator/]: Failed to load resource META-INF\jarjar\metadata.json from mclanguage-1.20.1-47.4.0.jar, it does not contain dependency information.
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.AbstractJarFileDependencyLocator/]: Failed to load resource META-INF\jarjar\metadata.json from javafmllanguage-1.20.1-47.4.0.jar, it does not contain dependency information.
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.AbstractJarFileDependencyLocator/]: Failed to load resource META-INF\jarjar\metadata.json from fmlcore-1.20.1-47.4.0.jar, it does not contain dependency information.
+[22:54:11] [main/DEBUG] [ne.mi.fm.lo.mo.AbstractJarFileDependencyLocator/]: Failed to load resource META-INF\jarjar\metadata.json from lowcodelanguage-1.20.1-47.4.0.jar, it does not contain dependency information.
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate 
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file mixinextras-forge-0.3.5.jar with {mixinextras} mods - versions {0.3.5}
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.AbstractJarFileDependencyLocator/]: Failed to load resource META-INF\jarjar\metadata.json from jcpp-1.4.14.jar, it does not contain dependency information.
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.AbstractJarFileDependencyLocator/]: Failed to load resource META-INF\jarjar\metadata.json from MixinExtras-0.3.5.jar, it does not contain dependency information.
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate 
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file mixinextras-forge-0.3.5.jar with {mixinextras} mods - versions {0.3.5}
+[22:54:12] [main/INFO] [ne.mi.fm.lo.mo.JarInJarDependencyLocator/]: Found 3 dependencies adding them to mods collection
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file forge-1.20.1-47.4.0.jar with {minecraft} mods - versions {1.20.1}
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFile/LOADING]: Loading mod file D:\document\dev\GitHub\voxy-1.20.1\build\moddev\artifacts\forge-1.20.1-47.4.0.jar with languages [LanguageSpec[languageName=minecraft, acceptedVersions=1]]
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate /
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file  with {forge} mods - versions {47.4.0}
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFile/LOADING]: Loading mod file / with languages [LanguageSpec[languageName=javafml, acceptedVersions=[24,]]]
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Found coremod field_to_method with Javascript path coremods/field_to_method.js
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Found coremod field_to_instanceof with Javascript path coremods/field_to_instanceof.js
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Found coremod add_bouncer_method with Javascript path coremods/add_bouncer_method.js
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Found coremod method_redirector with Javascript path coremods/method_redirector.js
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFile/LOADING]: Found coremod coremods/field_to_method.js
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFile/LOADING]: Found coremod coremods/field_to_instanceof.js
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFile/LOADING]: Found coremod coremods/add_bouncer_method.js
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFile/LOADING]: Found coremod coremods/method_redirector.js
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate C:\Users\HP\.gradle\caches\8.14.5\transforms\bf2866034a860c94be0e52732d3b33bb\transformed\embeddium-0.3.31+mc1.20.1.jar
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file embeddium-0.3.31+mc1.20.1.jar with {embeddium,rubidium} mods - versions {0.3.31+mc1.20.1,0.7.1}
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFile/LOADING]: Loading mod file C:\Users\HP\.gradle\caches\8.14.5\transforms\bf2866034a860c94be0e52732d3b33bb\transformed\embeddium-0.3.31+mc1.20.1.jar with languages [LanguageSpec[languageName=javafml, acceptedVersions=[47,)]]
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate C:\Users\HP\.gradle\caches\8.14.5\transforms\e66bb8c2c78dabf873f9f4b6614f2333\transformed\oculus-mc1.20.1-1.8.0.jar
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file oculus-mc1.20.1-1.8.0.jar with {oculus} mods - versions {1.8.0}
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFile/LOADING]: Loading mod file C:\Users\HP\.gradle\caches\8.14.5\transforms\e66bb8c2c78dabf873f9f4b6614f2333\transformed\oculus-mc1.20.1-1.8.0.jar with languages [LanguageSpec[languageName=javafml, acceptedVersions=*]]
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate D:\document\dev\GitHub\voxy-1.20.1\build\classes\java\main
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file main with {voxy} mods - versions {0.1.0}
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFile/LOADING]: Loading mod file D:\document\dev\GitHub\voxy-1.20.1\build\classes\java\main with languages [LanguageSpec[languageName=javafml, acceptedVersions=[47,)]]
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFile/LOADING]: Loading mod file  with languages []
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate 
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file mixinextras-forge-0.3.5.jar with {mixinextras} mods - versions {0.3.5}
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFile/LOADING]: Loading mod file  with languages [LanguageSpec[languageName=javafml, acceptedVersions=*]]
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFile/LOADING]: Loading mod file  with languages []
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFile/LOADING]: Loading mod file  with languages []
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Considering mod file candidate 
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFileInfo/LOADING]: Found valid mod file mixinextras-forge-0.3.5.jar with {mixinextras} mods - versions {0.3.5}
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFile/LOADING]: Loading mod file  with languages [LanguageSpec[languageName=javafml, acceptedVersions=*]]
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.mo.ModFile/LOADING]: Loading mod file  with languages []
+[22:54:12] [main/DEBUG] [cp.mo.mo.TransformationServiceDecorator/MODLAUNCHER]: End scan trigger - transformation service fml
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.LanguageLoadingProvider/CORE]: Found 3 language providers
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.LanguageLoadingProvider/CORE]: Found language provider minecraft, version 1.0
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.LanguageLoadingProvider/CORE]: Found language provider lowcodefml, version 47
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.LanguageLoadingProvider/CORE]: Found language provider javafml, version 47
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.UniqueModListBuilder/]: Found 2 mods for first modid MixinExtras, selecting most recent based on version data
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.UniqueModListBuilder/]: Selected file MixinExtras-0.3.5.jar for modid MixinExtras with version 0.0NONE
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.UniqueModListBuilder/]: Found 2 mods for first modid mixinextras, selecting most recent based on version data
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.UniqueModListBuilder/]: Selected file mixinextras-forge-0.3.5.jar for modid mixinextras with version 0.3.5
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.UniqueModListBuilder/]: Found 2 mods for first modid jcpp, selecting most recent based on version data
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.UniqueModListBuilder/]: Selected file jcpp-1.4.14.jar for modid jcpp with version 1.4.14
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.ModSorter/]: Configured system mods: [minecraft, forge]
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.ModSorter/]: Found system mod: minecraft
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.ModSorter/]: Found system mod: forge
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.ModSorter/LOADING]: Found 8 mod requirements (5 mandatory, 3 optional)
+[22:54:12] [main/DEBUG] [ne.mi.fm.lo.ModSorter/LOADING]: Found 0 mod requirements missing (0 mandatory, 0 optional)
+[22:54:13] [main/DEBUG] [ne.mi.fm.lo.MCPNamingService/CORE]: Loaded 33222 method mappings from methods.csv
+[22:54:13] [main/DEBUG] [ne.mi.fm.lo.MCPNamingService/CORE]: Loaded 31003 field mappings from fields.csv
+[22:54:13] [main/DEBUG] [cp.mo.mo.TransformationServicesHandler/MODLAUNCHER]: Transformation services loading transformers
+[22:54:13] [main/DEBUG] [cp.mo.mo.TransformationServiceDecorator/MODLAUNCHER]: Initializing transformers for transformation service mixin
+[22:54:13] [main/DEBUG] [cp.mo.mo.TransformationServiceDecorator/MODLAUNCHER]: Initialized transformers for transformation service mixin
+[22:54:13] [main/DEBUG] [cp.mo.mo.TransformationServiceDecorator/MODLAUNCHER]: Initializing transformers for transformation service fml
+[22:54:13] [main/DEBUG] [ne.mi.fm.lo.FMLServiceProvider/CORE]: Loading coremod transformers
+[22:54:13] [main/DEBUG] [ne.mi.co.CoreModEngine/COREMOD]: Loading CoreMod from coremods/field_to_method.js
+[22:54:14] [main/DEBUG] [ne.mi.co.CoreModEngine/COREMOD]: CoreMod loaded successfully
+[22:54:14] [main/DEBUG] [ne.mi.co.CoreModEngine/COREMOD]: Loading CoreMod from coremods/field_to_instanceof.js
+[22:54:14] [main/DEBUG] [ne.mi.co.CoreModEngine/COREMOD]: CoreMod loaded successfully
+[22:54:14] [main/DEBUG] [ne.mi.co.CoreModEngine/COREMOD]: Loading CoreMod from coremods/add_bouncer_method.js
+[22:54:15] [main/DEBUG] [ne.mi.co.CoreModEngine/COREMOD]: CoreMod loaded successfully
+[22:54:15] [main/DEBUG] [ne.mi.co.CoreModEngine/COREMOD]: Loading CoreMod from coremods/method_redirector.js
+[22:54:15] [main/DEBUG] [ne.mi.co.CoreModEngine/COREMOD]: CoreMod loaded successfully
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@69cd1085 to Target : CLASS {Lnet/minecraft/world/level/biome/Biome;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@3138953b to Target : CLASS {Lnet/minecraft/world/level/levelgen/structure/Structure;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@27df95e to Target : CLASS {Lnet/minecraft/world/effect/MobEffectInstance;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@b46e103 to Target : CLASS {Lnet/minecraft/world/level/block/LiquidBlock;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@2b0e9f30 to Target : CLASS {Lnet/minecraft/world/item/BucketItem;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5eea5627 to Target : CLASS {Lnet/minecraft/world/level/block/StairBlock;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@3330f3ad to Target : CLASS {Lnet/minecraft/world/level/block/FlowerPotBlock;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@f425231 to Target : CLASS {Lnet/minecraft/world/item/ItemStack;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@506aabf6 to Target : CLASS {Lnet/minecraft/network/play/client/CClientSettingsPacket;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/entity/monster/Zombie;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/entity/monster/Strider;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/entity/npc/Villager;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/level/levelgen/PatrolSpawner;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/entity/animal/frog/Tadpole;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/server/commands/RaidCommand;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/entity/npc/CatSpawner;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/entity/raid/Raid;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/entity/ai/village/VillageSiege;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/server/commands/SummonCommand;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/entity/animal/horse/SkeletonTrapGoal;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/entity/EntityType;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/level/levelgen/structure/structures/WoodlandMansionPieces$WoodlandMansionPiece;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/level/NaturalSpawner;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/entity/monster/Evoker$EvokerSummonSpellGoal;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/entity/monster/Spider;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/level/levelgen/structure/structures/OceanMonumentPieces$OceanMonumentPiece;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/level/levelgen/structure/structures/OceanRuinPieces$OceanRuinPiece;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/level/levelgen/structure/structures/SwampHutPiece;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/entity/monster/ZombieVillager;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformStore/MODLAUNCHER]: Adding transformer net.minecraftforge.coremod.transformer.CoreModClassTransformer@5cbd94b2 to Target : CLASS {Lnet/minecraft/world/level/levelgen/PhantomSpawner;} {} {V}
+[22:54:15] [main/DEBUG] [cp.mo.mo.TransformationServiceDecorator/MODLAUNCHER]: Initialized transformers for transformation service fml
+[22:54:16] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:ModLauncher Root Container(ModLauncher:4f56a0a2)]
+[22:54:16] [main/DEBUG] [mixin/]: Processing launch tasks for PlatformAgent[MixinPlatformAgentDefault:ModLauncher Root Container(ModLauncher:4f56a0a2)]
+[22:54:16] [main/DEBUG] [mixin/]: Adding mixin platform agents for container SecureJarResource(minecraft)
+[22:54:16] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentMinecraftForge for SecureJarResource(minecraft)
+[22:54:16] [main/DEBUG] [mixin/]: MixinPlatformAgentMinecraftForge rejected container SecureJarResource(minecraft)
+[22:54:16] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for SecureJarResource(minecraft)
+[22:54:16] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container SecureJarResource(minecraft)
+[22:54:16] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:SecureJarResource(minecraft)]
+[22:54:16] [main/DEBUG] [mixin/]: Adding mixin platform agents for container SecureJarResource(mixinextras)
+[22:54:16] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentMinecraftForge for SecureJarResource(mixinextras)
+[22:54:16] [main/DEBUG] [mixin/]: MixinPlatformAgentMinecraftForge rejected container SecureJarResource(mixinextras)
+[22:54:16] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for SecureJarResource(mixinextras)
+[22:54:16] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container SecureJarResource(mixinextras)
+[22:54:16] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:SecureJarResource(mixinextras)]
+[22:54:16] [main/DEBUG] [mixin/]: Registering mixin config: mixinextras.init.mixins.json
+[22:54:16] [main/DEBUG] [mixin/]: Adding mixin platform agents for container SecureJarResource(forge)
+[22:54:16] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentMinecraftForge for SecureJarResource(forge)
+[22:54:16] [main/DEBUG] [mixin/]: MixinPlatformAgentMinecraftForge rejected container SecureJarResource(forge)
+[22:54:16] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for SecureJarResource(forge)
+[22:54:16] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container SecureJarResource(forge)
+[22:54:16] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:SecureJarResource(forge)]
+[22:54:16] [main/DEBUG] [mixin/]: Adding mixin platform agents for container SecureJarResource(embeddium)
+[22:54:16] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentMinecraftForge for SecureJarResource(embeddium)
+[22:54:16] [main/DEBUG] [mixin/]: MixinPlatformAgentMinecraftForge rejected container SecureJarResource(embeddium)
+[22:54:16] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for SecureJarResource(embeddium)
+[22:54:16] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container SecureJarResource(embeddium)
+[22:54:16] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:SecureJarResource(embeddium)]
+[22:54:16] [main/DEBUG] [mixin/]: Registering mixin config: embeddium.mixins.json
+[22:54:16] [main/DEBUG] [mixin/]: Compatibility level JAVA_17 specified by embeddium.mixins.json is higher than the maximum level supported by this version of mixin (JAVA_13).
+[22:54:16] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
+[22:54:16] [main/DEBUG] [mixin/]: Adding mixin platform agents for container SecureJarResource(oculus)
+[22:54:16] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentMinecraftForge for SecureJarResource(oculus)
+[22:54:16] [main/DEBUG] [mixin/]: MixinPlatformAgentMinecraftForge rejected container SecureJarResource(oculus)
+[22:54:16] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for SecureJarResource(oculus)
+[22:54:16] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container SecureJarResource(oculus)
+[22:54:16] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:SecureJarResource(oculus)]
+[22:54:16] [main/DEBUG] [mixin/]: Registering mixin config: mixins.oculus.json
+[22:54:16] [main/DEBUG] [mixin/]: Compatibility level JAVA_8 specified by mixins.oculus.json is lower than the default level supported by the current mixin service (JAVA_16).
+[22:54:16] [main/DEBUG] [mixin/]: Registering mixin config: mixins.oculus.fantastic.json
+[22:54:16] [main/DEBUG] [mixin/]: Compatibility level JAVA_8 specified by mixins.oculus.fantastic.json is lower than the default level supported by the current mixin service (JAVA_16).
+[22:54:16] [main/DEBUG] [mixin/]: Registering mixin config: mixins.oculus.vertexformat.json
+[22:54:16] [main/DEBUG] [mixin/]: Compatibility level JAVA_8 specified by mixins.oculus.vertexformat.json is lower than the default level supported by the current mixin service (JAVA_16).
+[22:54:16] [main/DEBUG] [mixin/]: Registering mixin config: mixins.oculus.bettermipmaps.json
+[22:54:16] [main/DEBUG] [mixin/]: Compatibility level JAVA_8 specified by mixins.oculus.bettermipmaps.json is lower than the default level supported by the current mixin service (JAVA_16).
+[22:54:16] [main/DEBUG] [mixin/]: Registering mixin config: mixins.oculus.fixes.maxfpscrash.json
+[22:54:16] [main/DEBUG] [mixin/]: Compatibility level JAVA_8 specified by mixins.oculus.fixes.maxfpscrash.json is lower than the default level supported by the current mixin service (JAVA_16).
+[22:54:16] [main/DEBUG] [mixin/]: Registering mixin config: oculus-batched-entity-rendering.mixins.json
+[22:54:16] [main/DEBUG] [mixin/]: Compatibility level JAVA_8 specified by oculus-batched-entity-rendering.mixins.json is lower than the default level supported by the current mixin service (JAVA_16).
+[22:54:16] [main/DEBUG] [mixin/]: Registering mixin config: mixins.oculus.compat.sodium.json
+[22:54:16] [main/DEBUG] [mixin/]: Compatibility level JAVA_8 specified by mixins.oculus.compat.sodium.json is lower than the default level supported by the current mixin service (JAVA_16).
+[22:54:16] [main/DEBUG] [mixin/]: Registering mixin config: mixins.oculus.compat.indigo.json
+[22:54:16] [main/DEBUG] [mixin/]: Compatibility level JAVA_8 specified by mixins.oculus.compat.indigo.json is lower than the default level supported by the current mixin service (JAVA_16).
+[22:54:16] [main/DEBUG] [mixin/]: Registering mixin config: mixins.oculus.compat.indium.json
+[22:54:16] [main/DEBUG] [mixin/]: Compatibility level JAVA_8 specified by mixins.oculus.compat.indium.json is lower than the default level supported by the current mixin service (JAVA_16).
+[22:54:16] [main/DEBUG] [mixin/]: Registering mixin config: mixins.oculus.compat.dh.json
+[22:54:16] [main/DEBUG] [mixin/]: Compatibility level JAVA_8 specified by mixins.oculus.compat.dh.json is lower than the default level supported by the current mixin service (JAVA_16).
+[22:54:16] [main/DEBUG] [mixin/]: Registering mixin config: mixins.oculus.compat.pixelmon.json
+[22:54:16] [main/DEBUG] [mixin/]: Compatibility level JAVA_8 specified by mixins.oculus.compat.pixelmon.json is lower than the default level supported by the current mixin service (JAVA_16).
+[22:54:16] [main/DEBUG] [mixin/]: Adding mixin platform agents for container SecureJarResource(voxy)
+[22:54:16] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentMinecraftForge for SecureJarResource(voxy)
+[22:54:16] [main/DEBUG] [mixin/]: MixinPlatformAgentMinecraftForge rejected container SecureJarResource(voxy)
+[22:54:16] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for SecureJarResource(voxy)
+[22:54:16] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container SecureJarResource(voxy)
+[22:54:16] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:SecureJarResource(voxy)]
+[22:54:16] [main/DEBUG] [mixin/]: Adding mixin platform agents for container SecureJarResource(MixinExtras)
+[22:54:16] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentMinecraftForge for SecureJarResource(MixinExtras)
+[22:54:16] [main/DEBUG] [mixin/]: MixinPlatformAgentMinecraftForge rejected container SecureJarResource(MixinExtras)
+[22:54:16] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for SecureJarResource(MixinExtras)
+[22:54:16] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container SecureJarResource(MixinExtras)
+[22:54:16] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:SecureJarResource(MixinExtras)]
+[22:54:16] [main/DEBUG] [mixin/]: Adding mixin platform agents for container SecureJarResource(jcpp)
+[22:54:16] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentMinecraftForge for SecureJarResource(jcpp)
+[22:54:16] [main/DEBUG] [mixin/]: MixinPlatformAgentMinecraftForge rejected container SecureJarResource(jcpp)
+[22:54:16] [main/DEBUG] [mixin/]: Instancing new MixinPlatformAgentDefault for SecureJarResource(jcpp)
+[22:54:16] [main/DEBUG] [mixin/]: MixinPlatformAgentDefault accepted container SecureJarResource(jcpp)
+[22:54:16] [main/DEBUG] [mixin/]: Processing prepare() for PlatformAgent[MixinPlatformAgentDefault:SecureJarResource(jcpp)]
+[22:54:16] [main/DEBUG] [mixin/]: inject() running with 9 agents
+[22:54:16] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:ModLauncher Root Container(ModLauncher:4f56a0a2)]
+[22:54:16] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:SecureJarResource(minecraft)]
+[22:54:16] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:SecureJarResource(mixinextras)]
+[22:54:16] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:SecureJarResource(forge)]
+[22:54:16] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:SecureJarResource(embeddium)]
+[22:54:16] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:SecureJarResource(oculus)]
+[22:54:16] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:SecureJarResource(voxy)]
+[22:54:16] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:SecureJarResource(MixinExtras)]
+[22:54:16] [main/DEBUG] [mixin/]: Processing inject() for PlatformAgent[MixinPlatformAgentDefault:SecureJarResource(jcpp)]
+[22:54:16] [main/INFO] [cp.mo.mo.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgeclientuserdev' with arguments [--version, MOD_DEV, --gameDir, ., --assetsDir, C:\Users\HP\.gradle\caches\neoformruntime\assets, --assetIndex, 5]
+[22:54:17] [main/DEBUG] [mixin/]: Error cleaning class output directory: .mixin.out
+[22:54:17] [main/DEBUG] [mixin/]: Preparing mixins for MixinEnvironment[DEFAULT]
+[22:54:17] [main/DEBUG] [mixin/]: Selecting config mixinextras.init.mixins.json
+[22:54:17] [main/DEBUG] [MixinExtras|Service/]: com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.3.5) is taking over from null
+[22:54:17] [main/DEBUG] [mixin/]: Registering new injector for @Inject with org.spongepowered.asm.mixin.injection.struct.CallbackInjectionInfo
+[22:54:17] [main/DEBUG] [mixin/]: Registering new injector for @ModifyArg with org.spongepowered.asm.mixin.injection.struct.ModifyArgInjectionInfo
+[22:54:17] [main/DEBUG] [mixin/]: Registering new injector for @ModifyArgs with org.spongepowered.asm.mixin.injection.struct.ModifyArgsInjectionInfo
+[22:54:17] [main/DEBUG] [mixin/]: Registering new injector for @Redirect with org.spongepowered.asm.mixin.injection.struct.RedirectInjectionInfo
+[22:54:17] [main/DEBUG] [mixin/]: Registering new injector for @ModifyVariable with org.spongepowered.asm.mixin.injection.struct.ModifyVariableInjectionInfo
+[22:54:17] [main/DEBUG] [mixin/]: Registering new injector for @ModifyConstant with org.spongepowered.asm.mixin.injection.struct.ModifyConstantInjectionInfo
+[22:54:17] [main/DEBUG] [mixin/]: Selecting config embeddium.mixins.json
+[22:54:17] [main/INFO] [Embeddium/]: Loaded configuration file for Embeddium: 51 options available, 3 override(s) found
+[22:54:17] [main/INFO] [Embeddium-GraphicsAdapterProbe/]: Searching for graphics cards...
+[22:54:17] [main/DEBUG] [os.ut.FileUtil/]: No oshi.properties file found from ClassLoader cpw.mods.modlauncher.TransformingClassLoader@7bf01cb
+[22:54:18] [main/INFO] [Embeddium-GraphicsAdapterProbe/]: Found graphics card: GraphicsAdapterInfo[vendor=INTEL, name=Intel(R) Iris(R) Xe Graphics, version=DriverVersion=32.0.101.7076]
+[22:54:18] [main/INFO] [Embeddium-GraphicsAdapterProbe/]: Found graphics card: GraphicsAdapterInfo[vendor=UNKNOWN, name=GameViewer Virtual Display Adapter, version=DriverVersion=15.6.5.199]
+[22:54:18] [main/INFO] [mixin/]: Remapping refMap embeddium-refmap.json using D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\artifacts\\intermediateToNamed.srg
+[22:54:18] [main/DEBUG] [mixin/]: Selecting config mixins.oculus.json
+[22:54:18] [main/INFO] [mixin/]: Remapping refMap oculus-mixins-refmap.json using D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\artifacts\\intermediateToNamed.srg
+[22:54:18] [main/DEBUG] [mixin/]: Selecting config mixins.oculus.fantastic.json
+[22:54:18] [main/INFO] [mixin/]: Remapping refMap oculus-mixins-refmap.json using D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\artifacts\\intermediateToNamed.srg
+[22:54:18] [main/DEBUG] [mixin/]: Selecting config mixins.oculus.vertexformat.json
+[22:54:18] [main/INFO] [mixin/]: Remapping refMap oculus-mixins-refmap.json using D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\artifacts\\intermediateToNamed.srg
+[22:54:18] [main/DEBUG] [mixin/]: Selecting config mixins.oculus.bettermipmaps.json
+[22:54:18] [main/INFO] [mixin/]: Remapping refMap oculus-mixins-refmap.json using D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\artifacts\\intermediateToNamed.srg
+[22:54:18] [main/DEBUG] [mixin/]: Selecting config mixins.oculus.fixes.maxfpscrash.json
+[22:54:18] [main/INFO] [mixin/]: Remapping refMap oculus-mixins-refmap.json using D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\artifacts\\intermediateToNamed.srg
+[22:54:18] [main/DEBUG] [mixin/]: Selecting config oculus-batched-entity-rendering.mixins.json
+[22:54:18] [main/INFO] [mixin/]: Remapping refMap oculus-mixins-refmap.json using D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\artifacts\\intermediateToNamed.srg
+[22:54:18] [main/DEBUG] [mixin/]: Selecting config mixins.oculus.compat.sodium.json
+[22:54:18] [main/INFO] [mixin/]: Remapping refMap sodiumCompatibility-oculus-mixins-refmap.json using D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\artifacts\\intermediateToNamed.srg
+[22:54:18] [main/DEBUG] [mixin/]: Selecting config mixins.oculus.compat.indigo.json
+[22:54:18] [main/INFO] [mixin/]: Remapping refMap oculus-mixins-refmap.json using D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\artifacts\\intermediateToNamed.srg
+[22:54:18] [main/DEBUG] [mixin/]: Selecting config mixins.oculus.compat.indium.json
+[22:54:18] [main/INFO] [mixin/]: Remapping refMap oculus-mixins-refmap.json using D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\artifacts\\intermediateToNamed.srg
+[22:54:18] [main/DEBUG] [mixin/]: Selecting config mixins.oculus.compat.dh.json
+[22:54:18] [main/INFO] [mixin/]: Remapping refMap oculus-mixins-refmap.json using D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\artifacts\\intermediateToNamed.srg
+[22:54:18] [main/DEBUG] [mixin/]: Selecting config mixins.oculus.compat.pixelmon.json
+[22:54:18] [main/INFO] [mixin/]: Remapping refMap oculus-mixins-refmap.json using D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\artifacts\\intermediateToNamed.srg
+[22:54:18] [main/DEBUG] [mixin/]: Preparing mixinextras.init.mixins.json (0)
+[22:54:18] [main/DEBUG] [mixin/]: Preparing embeddium.mixins.json (0)
+[22:54:18] [main/DEBUG] [mixin/]: Preparing mixins.oculus.json (88)
+[22:54:18] [main/DEBUG] [ne.mi.co.tr.CoreModBaseTransformer/COREMOD]: Transforming net/minecraft/world/level/biome/Biome
+[22:54:19] [main/WARN] [mixin/]: Error loading class: mekanism/client/render/entity/RenderFlame (java.lang.ClassNotFoundException: mekanism.client.render.entity.RenderFlame)
+[22:54:19] [main/DEBUG] [mixin/]: Skipping virtual target mekanism/client/render/entity/RenderFlame for mixins.oculus.json:entity_render_context.MixinRenderFlame
+[22:54:19] [main/WARN] [mixin/]: Error loading class: mekanism/client/render/armor/MekaSuitArmor (java.lang.ClassNotFoundException: mekanism.client.render.armor.MekaSuitArmor)
+[22:54:19] [main/DEBUG] [mixin/]: Skipping virtual target mekanism/client/render/armor/MekaSuitArmor for mixins.oculus.json:entity_render_context.MixinRenderMekasuit
+[22:54:19] [main/DEBUG] [mixin/]: Preparing mixins.oculus.fantastic.json (5)
+[22:54:19] [main/DEBUG] [mixin/]: Preparing mixins.oculus.vertexformat.json (8)
+[22:54:19] [main/DEBUG] [mixin/]: @Mixin target net/minecraft/client/renderer/chunk/ChunkRenderDispatcher$RenderChunk$RebuildTask is public in mixins.oculus.vertexformat.json:block_rendering.MixinChunkRebuildTask and should be specified in value
+[22:54:19] [main/DEBUG] [mixin/]: Preparing mixins.oculus.bettermipmaps.json (0)
+[22:54:19] [main/DEBUG] [mixin/]: Preparing mixins.oculus.fixes.maxfpscrash.json (1)
+[22:54:19] [main/DEBUG] [mixin/]: Preparing oculus-batched-entity-rendering.mixins.json (17)
+[22:54:19] [main/DEBUG] [mixin/]: Preparing mixins.oculus.compat.sodium.json (49)
+[22:54:19] [main/DEBUG] [mixin/]: Preparing mixins.oculus.compat.indigo.json (1)
+[22:54:19] [main/DEBUG] [mixin/]: Preparing mixins.oculus.compat.indium.json (1)
+[22:54:19] [main/DEBUG] [mixin/]: Preparing mixins.oculus.compat.dh.json (4)
+[22:54:19] [main/DEBUG] [mixin/]: Preparing mixins.oculus.compat.pixelmon.json (1)
+[22:54:19] [main/WARN] [Embeddium/]: Force-disabling mixin 'features.render.world.sky.WorldRendererMixin' as rule 'mixin.features.render.world.sky' (added by mods [oculus]) disables it and children
+[22:54:19] [main/WARN] [Embeddium/]: Force-disabling mixin 'features.render.world.sky.ClientWorldMixin' as rule 'mixin.features.render.world.sky' (added by mods [oculus]) disables it and children
+[22:54:19] [main/WARN] [Embeddium/]: Force-disabling mixin 'features.render.world.sky.BackgroundRendererMixin' as rule 'mixin.features.render.world.sky' (added by mods [oculus]) disables it and children
+[22:54:19] [main/WARN] [Embeddium/]: Force-disabling mixin 'features.render.gui.font.GlyphRendererMixin' as rule 'mixin.features.render.gui.font' (added by mods [oculus]) disables it and children
+[22:54:19] [main/WARN] [Embeddium/]: Force-disabling mixin 'features.render.gui.font.FontSetMixin' as rule 'mixin.features.render.gui.font' (added by mods [oculus]) disables it and children
+[22:54:19] [main/WARN] [Embeddium/]: Force-disabling mixin 'features.render.entity.shadows.EntityRenderDispatcherMixin' as rule 'mixin.features.render.entity' (added by mods [oculus]) disables it and children
+[22:54:19] [main/WARN] [Embeddium/]: Force-disabling mixin 'features.render.entity.remove_streams.ModelPartMixin' as rule 'mixin.features.render.entity' (added by mods [oculus]) disables it and children
+[22:54:19] [main/WARN] [Embeddium/]: Force-disabling mixin 'features.render.entity.remove_streams.HierarchicalModelMixin' as rule 'mixin.features.render.entity' (added by mods [oculus]) disables it and children
+[22:54:19] [main/WARN] [Embeddium/]: Force-disabling mixin 'features.render.entity.fast_render.ModelPartMixin' as rule 'mixin.features.render.entity' (added by mods [oculus]) disables it and children
+[22:54:19] [main/WARN] [Embeddium/]: Force-disabling mixin 'features.render.entity.fast_render.CuboidMixin' as rule 'mixin.features.render.entity' (added by mods [oculus]) disables it and children
+[22:54:19] [main/WARN] [Embeddium/]: Force-disabling mixin 'features.render.entity.cull.EntityRendererMixin' as rule 'mixin.features.render.entity' (added by mods [oculus]) disables it and children
+[22:54:19] [main/DEBUG] [mixin/]: Prepared 166 mixins in 2.654 sec (16.0ms avg) (0ms load, 0ms transform, 0ms plugin)
+[22:54:19] [main/INFO] [MixinExtras|Service/]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.3.5).
+[22:54:19] [main/DEBUG] [mixin/]: Registering new injector for @SugarWrapper with com.llamalad7.mixinextras.sugar.impl.SugarWrapperInjectionInfo
+[22:54:19] [main/DEBUG] [mixin/]: Registering new injector for @FactoryRedirectWrapper with com.llamalad7.mixinextras.wrapper.factory.FactoryRedirectWrapperInjectionInfo
+[22:54:19] [main/DEBUG] [mixin/]: Mixing texture.MixinAbstractTexture from mixins.oculus.json into net.minecraft.client.renderer.texture.AbstractTexture
+[22:54:19] [main/DEBUG] [mixin/]: mixins.oculus.json:texture.MixinAbstractTexture: Class version 61 required is higher than the class version supported by the current version of Mixin (JAVA_8 supports class version 52)
+[22:54:20] [main/DEBUG] [mixin/]: Mixing texture.SimpleTextureAccessor from mixins.oculus.json into net.minecraft.client.renderer.texture.SimpleTexture
+[22:54:20] [main/DEBUG] [mixin/]: mixins.oculus.json:texture.SimpleTextureAccessor: Class version 61 required is higher than the class version supported by the current version of Mixin (JAVA_8 supports class version 52)
+[22:54:20] [main/DEBUG] [mixin/]: Mixing features.render.immediate.matrix_stack.VertexConsumerMixin from embeddium.mixins.json into com.mojang.blaze3d.vertex.VertexConsumer
+[22:54:20] [main/DEBUG] [mixin/]: Mixing features.textures.animations.tracking.DrawContextMixin from embeddium.mixins.json into net.minecraft.client.gui.GuiGraphics
+[22:54:20] [main/DEBUG] [mixin/]: Mixing MixinMinecraft_PipelineManagement from mixins.oculus.json into net.minecraft.client.Minecraft
+[22:54:20] [main/DEBUG] [mixin/]: mixins.oculus.json:MixinMinecraft_PipelineManagement: Class version 61 required is higher than the class version supported by the current version of Mixin (JAVA_8 supports class version 52)
+[22:54:20] [main/DEBUG] [mixin/]: Mixing core.render.MinecraftAccessor from embeddium.mixins.json into net.minecraft.client.Minecraft
+[22:54:20] [main/DEBUG] [mixin/]: Mixing core.MinecraftClientMixin from embeddium.mixins.json into net.minecraft.client.Minecraft
+[22:54:20] [main/DEBUG] [mixin/]: Renaming synthetic method lambda$postInit$0(Lnet/minecraft/client/gui/screens/Screen;)Lnet/minecraft/client/gui/screens/Screen; to mdb76c82$lambda$postInit$0$0 in embeddium.mixins.json:core.MinecraftClientMixin
+2026-07-11 22:54:20,840 main WARN Error parsing URI D:\\document\\dev\\GitHub\\voxy-1.20.1\\build\\moddev\\clientLog4j2.xml
+[22:54:28] [Datafixer Bootstrap/INFO] [mojang/DataFixerBuilder]: 188 Datafixer optimizations took 238 milliseconds
+[22:54:32] [Render thread/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/D:/document/dev/GitHub/voxy-1.20.1/build/moddev/artifacts/forge-1.20.1-47.4.0.jar%23189!/assets/.mcassetsroot' uses unexpected schema
+[22:54:32] [Render thread/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/D:/document/dev/GitHub/voxy-1.20.1/build/moddev/artifacts/forge-1.20.1-47.4.0.jar%23189!/data/.mcassetsroot' uses unexpected schema
+[22:54:32] [Render thread/INFO] [mojang/YggdrasilAuthenticationService]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[22:54:32] [Render thread/INFO] [minecraft/Minecraft]: Setting user: Dev
+[22:54:33] [Render thread/INFO] [minecraft/Minecraft]: Backend library: LWJGL version 3.3.1 build 7
+[22:54:33] [Render thread/ERROR] [Embeddium-MixinTaintDetector/]: Mod mixin into Embeddium internals detected. This instance is now tainted. The Embeddium team does not provide any guarantee of support for issues encountered while such mods are installed.
+[22:54:33] [Render thread/WARN] [Embeddium-MixinTaintDetector/]: Mod(s) [oculus] are modifying Embeddium class me.jellysquid.mods.sodium.client.gui.SodiumGameOptions, which may cause instability.
+[22:54:33] [Render thread/INFO] [Embeddium-PostlaunchChecks/]: OpenGL Vendor: Intel
+[22:54:33] [Render thread/INFO] [Embeddium-PostlaunchChecks/]: OpenGL Renderer: Intel(R) Iris(R) Xe Graphics
+[22:54:33] [Render thread/INFO] [Embeddium-PostlaunchChecks/]: OpenGL Version: 4.6.0 - Build 32.0.101.7076
+[22:54:34] [Render thread/INFO] [Oculus/]: Debug functionality is disabled.
+[22:54:34] [Render thread/INFO] [Oculus/]: OpenGL 4.5 detected, enabling DSA.
+[22:54:34] [Render thread/INFO] [Oculus/]: Shaders are disabled because no valid shaderpack is selected
+[22:54:34] [Render thread/INFO] [Oculus/]: Shaders are disabled
+[22:54:34] [modloading-worker-0/INFO] [co.y2.vo.Voxy/]: Initializing Voxy
+[22:54:34] [modloading-worker-0/INFO] [ne.mi.co.ForgeMod/FORGEMOD]: Forge mod loading, version 47.4.0, for MC 1.20.1 with MCP 20230612.114412
+[22:54:34] [modloading-worker-0/INFO] [ne.mi.co.MinecraftForge/FORGE]: MinecraftForge v47.4.0 Initialized
+[22:54:34] [modloading-worker-0/WARN] [Embeddium-MixinTaintDetector/]: Mod(s) [oculus] are modifying Embeddium class me.jellysquid.mods.sodium.client.gui.SodiumOptionsGUI, which may cause instability.
+[22:54:36] [Render thread/INFO] [Oculus/]: Hardware information:
+[22:54:36] [Render thread/INFO] [Oculus/]: CPU: 16x 13th Gen Intel(R) Core(TM) i5-1340P
+[22:54:36] [Render thread/INFO] [Oculus/]: GPU: Intel(R) Iris(R) Xe Graphics (Supports OpenGL 4.6.0 - Build 32.0.101.7076)
+[22:54:36] [Render thread/INFO] [Oculus/]: OS: Windows 11 (10.0)
+[22:54:37] [Render thread/WARN] [Embeddium-MixinTaintDetector/]: Mod(s) [oculus] are modifying Embeddium class me.jellysquid.mods.sodium.client.render.vertex.VertexFormatDescriptionImpl, which may cause instability.
+[22:54:37] [Render thread/WARN] [Embeddium-MixinTaintDetector/]: Mod(s) [oculus] are modifying Embeddium class me.jellysquid.mods.sodium.client.render.vertex.buffer.SodiumBufferBuilder, which may cause instability.
+[22:54:37] [Render thread/WARN] [Embeddium-MixinTaintDetector/]: Mod(s) [oculus] are modifying Embeddium class me.jellysquid.mods.sodium.client.render.SodiumWorldRenderer, which may cause instability.
+[22:54:37] [Render thread/INFO] [ne.mi.ga.ForgeGameTestHooks/]: Enabled Gametest Namespaces: [voxy]
+[22:54:38] [Render thread/INFO] [minecraft/ReloadableResourceManager]: Reloading ResourceManager: vanilla, mod_resources
+[22:54:38] [modloading-worker-0/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Configuration file D:\document\dev\GitHub\voxy-1.20.1\run\config\voxy-client.toml is not correct. Correcting
+[22:54:38] [modloading-worker-0/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key renderingEnabled was corrected from null to its default, false. 
+[22:54:38] [modloading-worker-0/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Configuration file D:\document\dev\GitHub\voxy-1.20.1\run\config\forge-client.toml is not correct. Correcting
+[22:54:38] [modloading-worker-0/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key client was corrected from null to its default, SimpleCommentedConfig:{}. 
+[22:54:38] [modloading-worker-0/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key client.alwaysSetupTerrainOffThread was corrected from null to its default, false. 
+[22:54:38] [modloading-worker-0/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key client.experimentalForgeLightPipelineEnabled was corrected from null to its default, false. 
+[22:54:38] [modloading-worker-0/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key client.showLoadWarnings was corrected from null to its default, true. 
+[22:54:38] [modloading-worker-0/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key client.useCombinedDepthStencilAttachment was corrected from null to its default, false. 
+[22:54:38] [modloading-worker-0/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key client.compressLanIPv6Addresses was corrected from null to its default, true. 
+[22:54:38] [modloading-worker-0/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key client.calculateAllNormals was corrected from null to its default, false. 
+[22:54:38] [modloading-worker-0/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key client.stabilizeDirectionGetNearest was corrected from null to its default, true. 
+[22:54:38] [modloading-worker-0/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key client.allowMipmapLowering was corrected from null to its default, false. 
+[22:54:38] [Forge Version Check/INFO] [ne.mi.fm.VersionChecker/]: [forge] Starting version check at https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json
+[22:54:38] [Worker-Main-11/INFO] [minecraft/UnihexProvider]: Found unifont_all_no_pua-15.0.06.hex, loading
+[22:54:39] [Worker-Main-6/INFO] [co.y2.vo.Voxy/]: Voxy client bootstrap complete
+[22:54:40] [Forge Version Check/INFO] [ne.mi.fm.VersionChecker/]: [forge] Found status: OUTDATED Current: 47.4.0 Target: 47.4.10
+[22:54:43] [Render thread/WARN] [minecraft/SoundEngine]: Missing sound for event: minecraft:item.goat_horn.play
+[22:54:43] [Render thread/WARN] [minecraft/SoundEngine]: Missing sound for event: minecraft:entity.goat.screaming.horn_break
+[22:54:44] [Render thread/INFO] [mojang/Library]: OpenAL initialized on device OpenAL Soft on Speaker (Realtek(R) Audio)
+[22:54:44] [Render thread/INFO] [minecraft/SoundEngine]: Sound engine started
+[22:54:45] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x512x4 minecraft:textures/atlas/blocks.png-atlas
+[22:54:45] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 256x256x4 minecraft:textures/atlas/signs.png-atlas
+[22:54:45] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x512x4 minecraft:textures/atlas/banner_patterns.png-atlas
+[22:54:45] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x512x4 minecraft:textures/atlas/shield_patterns.png-atlas
+[22:54:46] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x1024x4 minecraft:textures/atlas/armor_trims.png-atlas
+[22:54:46] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 256x256x4 minecraft:textures/atlas/chest.png-atlas
+[22:54:46] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 128x64x4 minecraft:textures/atlas/decorated_pot.png-atlas
+[22:54:46] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x256x4 minecraft:textures/atlas/beds.png-atlas
+[22:54:46] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x256x4 minecraft:textures/atlas/shulker_boxes.png-atlas
+[22:54:46] [Render thread/WARN] [minecraft/ShaderInstance]: Shader rendertype_entity_translucent_emissive could not find sampler named Sampler2 in the specified shader program.
+[22:54:47] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 256x256x0 minecraft:textures/atlas/particles.png-atlas
+[22:54:47] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 256x256x0 minecraft:textures/atlas/paintings.png-atlas
+[22:54:47] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 128x128x0 minecraft:textures/atlas/mob_effects.png-atlas
+[22:55:04] [Render thread/INFO] [minecraft/ReloadableResourceManager]: Reloading ResourceManager: vanilla, mod_resources
+[22:55:04] [Worker-Main-4/INFO] [minecraft/UnihexProvider]: Found unifont_all_no_pua-15.0.06.hex, loading
+[22:55:05] [Render thread/WARN] [minecraft/SoundEngine]: Missing sound for event: minecraft:item.goat_horn.play
+[22:55:05] [Render thread/WARN] [minecraft/SoundEngine]: Missing sound for event: minecraft:entity.goat.screaming.horn_break
+[22:55:06] [Render thread/INFO] [mojang/Library]: OpenAL initialized on device OpenAL Soft on Speaker (Realtek(R) Audio)
+[22:55:06] [Render thread/INFO] [minecraft/SoundEngine]: Sound engine started
+[22:55:06] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x512x4 minecraft:textures/atlas/blocks.png-atlas
+[22:55:06] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 256x256x4 minecraft:textures/atlas/signs.png-atlas
+[22:55:06] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x512x4 minecraft:textures/atlas/banner_patterns.png-atlas
+[22:55:06] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x512x4 minecraft:textures/atlas/shield_patterns.png-atlas
+[22:55:06] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 1024x1024x4 minecraft:textures/atlas/armor_trims.png-atlas
+[22:55:07] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 256x256x4 minecraft:textures/atlas/chest.png-atlas
+[22:55:07] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 128x64x4 minecraft:textures/atlas/decorated_pot.png-atlas
+[22:55:07] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x256x4 minecraft:textures/atlas/beds.png-atlas
+[22:55:07] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 512x256x4 minecraft:textures/atlas/shulker_boxes.png-atlas
+[22:55:07] [Render thread/WARN] [minecraft/ShaderInstance]: Shader rendertype_entity_translucent_emissive could not find sampler named Sampler2 in the specified shader program.
+[22:55:07] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 256x256x0 minecraft:textures/atlas/particles.png-atlas
+[22:55:07] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 256x256x0 minecraft:textures/atlas/paintings.png-atlas
+[22:55:07] [Render thread/INFO] [minecraft/TextureAtlas]: Created: 128x128x0 minecraft:textures/atlas/mob_effects.png-atlas
+[22:55:07] [Render thread/WARN] [Embeddium-MixinTaintDetector/]: Mod(s) [oculus] are modifying Embeddium class me.jellysquid.mods.sodium.client.gl.device.GLRenderDevice$ImmediateDrawCommandList, which may cause instability.
+[22:55:23] [Render thread/INFO] [Oculus/]: Creating pipeline for dimension NamespacedId{namespace='minecraft', name='overworld'}
+[22:55:23] [Realms Notification Availability checker #1/INFO] [mojang/RealmsClient]: Could not authorize you against Realms server: java.lang.RuntimeException: Failed to parse into SignedJWT: 0
+[22:55:31] [Render thread/INFO] [minecraft/Minecraft]: Stopping!
+
+[Incubating] Problems report is available at: file:///D:/document/dev/GitHub/voxy-1.20.1/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 1m 43s
+8 actionable tasks: 2 executed, 6 up-to-date
+Configuration cache entry reused.
